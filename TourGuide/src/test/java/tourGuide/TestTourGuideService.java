@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -12,6 +13,8 @@ import java.util.concurrent.Executors;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.mockito.InjectMocks;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
@@ -24,10 +27,20 @@ import tourGuide.user.User;
 import tripPricer.Provider;
 
 public class TestTourGuideService {
+	
+	
 	private ExecutorService executorService = Executors.newFixedThreadPool(1000);
-
+	private static Locale locale = new Locale("en", "US");
+	
+	
+	@BeforeAll
+	private static void init() {
+		
+    }
+	
 	@Test
 	public void getUserLocation() throws InterruptedException, ExecutionException {
+		Locale.setDefault(locale);
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
 		InternalTestHelper.setInternalUserNumber(0);
