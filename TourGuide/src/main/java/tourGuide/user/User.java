@@ -61,8 +61,9 @@ public class User {
 		visitedLocations.add(visitedLocation);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<VisitedLocation> getVisitedLocations() {
-		return visitedLocations;
+		return (List<VisitedLocation>)((ArrayList<VisitedLocation>)visitedLocations).clone();
 	}
 	
 	public void clearVisitedLocations() {
@@ -70,13 +71,14 @@ public class User {
 	}
 	
 	public void addUserReward(UserReward userReward) {
-		if(userRewards.stream().filter(r -> !r.attraction.attractionName.equals(userReward.attraction)).count() == 0) {
-			userRewards.add(userReward);
+		if(this.userRewards.stream().noneMatch(r -> r.attraction.attractionName.equals(userReward.attraction.attractionName))) {
+			this.userRewards.add(userReward);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<UserReward> getUserRewards() {
-		return userRewards;
+		return (List<UserReward>)((ArrayList<UserReward>)userRewards).clone();
 	}
 	
 	public UserPreferences getUserPreferences() {

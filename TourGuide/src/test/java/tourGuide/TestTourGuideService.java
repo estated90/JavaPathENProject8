@@ -14,8 +14,6 @@ import java.util.concurrent.Executors;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
-import org.mockito.InjectMocks;
-
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
