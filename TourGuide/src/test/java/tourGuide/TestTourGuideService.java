@@ -1,7 +1,6 @@
 package tourGuide;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -16,8 +15,8 @@ import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 
 import org.javamoney.moneta.Money;
-import org.junit.Ignore;
 import org.junit.Test;
+
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
