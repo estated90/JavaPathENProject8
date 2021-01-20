@@ -23,6 +23,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import tourGuide.dto.NearbyAttractions;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -98,12 +99,16 @@ public class TourGuideService {
 
     }
 
-    public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-	List<Attraction> nearbyAttractions = new ArrayList<>();
-	for (Attraction attraction : gpsUtil.getAttractions()) {
-	    if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-		nearbyAttractions.add(attraction);
-	    }
+    public List<NearbyAttractions> getNearByAttractions(VisitedLocation visitedLocation, User user) {
+	List<NearbyAttractions> nearbyAttractions = new ArrayList<>();
+	for (Attraction attraction : gpsUtil.getAttractions()) { 
+		NearbyAttractions nearByAttraction = new NearbyAttractions();
+		nearByAttraction.setDistance(rewardsService.getDistance(visitedLocation.location, attraction));
+		nearByAttraction.setLatitude(attraction.latitude);
+		nearByAttraction.setLongitude(attraction.longitude);
+		nearByAttraction.setRewardPoints(rewardsService.getRewardPoints(attraction, user));
+		nearByAttraction.setVisitedLocation(visitedLocation);
+		nearbyAttractions.add(nearByAttraction);
 	}
 
 	return nearbyAttractions;

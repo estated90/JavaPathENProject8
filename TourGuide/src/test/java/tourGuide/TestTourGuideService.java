@@ -21,6 +21,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.dto.NearbyAttractions;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
@@ -115,7 +116,7 @@ public class TestTourGuideService {
 	User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 	CompletableFuture<VisitedLocation> visitedLocation = tourGuideService.trackUserLocation(user);
 
-	List<Attraction> attractions = tourGuideService.getNearByAttractions(visitedLocation.get());
+	List<NearbyAttractions> attractions = tourGuideService.getNearByAttractions(visitedLocation.get(), user);
 
 	tourGuideService.tracker.stopTracking();
 
