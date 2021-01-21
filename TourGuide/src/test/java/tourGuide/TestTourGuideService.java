@@ -173,7 +173,7 @@ public class TestTourGuideService {
 
 		assertEquals(200, userPreferences.getAttractionProximity());
 		assertEquals(Money.of(30000, currency), userPreferences.getHighPricePoint());
-		assertEquals(Money.of(1000, currency), userPreferences.getLowerPricePoint());
+		assertEquals(Money.of(100, currency), userPreferences.getLowerPricePoint());
 		assertEquals(8, userPreferences.getNumberOfAdults());
 		assertEquals(10, userPreferences.getNumberOfChildren());
 		assertEquals(2, userPreferences.getTicketQuantity());

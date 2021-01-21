@@ -1,5 +1,7 @@
 package tourGuide.user;
 
+import java.util.Locale;
+
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import javax.validation.constraints.Min;
@@ -10,7 +12,7 @@ public class UserPreferences {
 
 	@Min(value = 0, message = "The proximity cannot be negative")
 	private int attractionProximity = Integer.MAX_VALUE;
-	private CurrencyUnit currency = Monetary.getCurrency("USD");
+	private CurrencyUnit currency = Monetary.getCurrency(Locale.US);
 	@Min(value = 0, message = "Negative price are impossible")
 	private Money lowerPricePoint = Money.of(0, currency);
 	@Min(value = 1, message = "The higher price must be higher then the lower")

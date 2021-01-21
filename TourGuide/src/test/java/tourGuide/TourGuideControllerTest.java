@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,14 +26,15 @@ import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = Application.class)
 @AutoConfigureMockMvc
+@WebMvcTest
 public class TourGuideControllerTest {
 
 	private ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
 	@Autowired
-	TourGuideController tourGuideController;
+	private TourGuideController tourGuideController;
 
 	@Autowired
 	private MockMvc mockMvc;
