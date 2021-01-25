@@ -107,4 +107,12 @@ public class TourGuideControllerTest {
 		.andExpect(jsonPath("$.errors", hasItem("Children cannot be negative")));
     }
 
+    @Test
+    public void whenPostRequestToPreferencessAndValidPreferences_thenUserDoNotExistResponse() throws Exception {
+	String preferences = "{\"attractionProximity\":\"1\",\"lowerPricePoint\":\"100\",\"highPricePoint\":\"1000\",\"tripDuration\":\"1\",\"ticketQuantity\":\"1\",\"numberOfAdults\":\"1\",\"numberOfChildren\":\"0\"}";
+	mockMvc.perform(MockMvcRequestBuilders.post("/postPreferences").param("userName", ("test")).content(preferences)
+		.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)).andDo(print())
+		.andExpect(jsonPath("$.timestamp", is(notNullValue()))).andExpect(jsonPath("$.status", is(400)));
+    }
+
 }

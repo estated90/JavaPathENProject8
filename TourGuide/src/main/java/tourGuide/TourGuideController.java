@@ -42,7 +42,8 @@ public class TourGuideController {
 
 	@PostMapping(value = "/postPreferences", params = "userName")
 	public UserPreferences postPreferences(@RequestParam String userName, @Valid @RequestBody UserNewPreferences userPreferences) throws UserNoTFoundException {
-		return tourGuideService.updatePreferences(getUser(userName), userPreferences);
+		User user = getUser(userName);
+	    return tourGuideService.updatePreferences(user, userPreferences);
 	}
 
 	// TODO: Change this method to no longer return a List of Attractions.
