@@ -29,6 +29,7 @@ import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
+import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -71,8 +72,15 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public User getUser(String userName) {
-		return internalUserMap.get(userName);
+	public User getUser(String userName) throws UserNoTFoundException {
+		User user = internalUserMap.get(userName);
+		if (user!=null) {
+			return user;
+		}else {
+			logger.error("User do not exist in DB");
+			throw new UserNoTFoundException(userName);
+		}
+		
 	}
 
 	public List<User> getAllUsers() {

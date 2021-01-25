@@ -22,6 +22,7 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
+import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
@@ -49,7 +50,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void addUser() {
+	public void addUser() throws UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
 		InternalTestHelper.setInternalUserNumber(0);

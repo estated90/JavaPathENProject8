@@ -16,6 +16,7 @@ import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
 import tourGuide.dto.UserNewPreferences;
+import tourGuide.exception.UserNoTFoundException;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 import tripPricer.Provider;
@@ -24,7 +25,8 @@ import tripPricer.Provider;
 public class TourGuideController {
 
 	@Autowired
-	TourGuideService tourGuideService;
+	private TourGuideService tourGuideService;
+	
 
 	@RequestMapping("/")
 	public String index() {
@@ -32,13 +34,13 @@ public class TourGuideController {
 	}
 
 	@RequestMapping("/getLocation")
-	public String getLocation(@RequestParam String userName) throws InterruptedException, ExecutionException {
+	public String getLocation(@RequestParam String userName) throws InterruptedException, ExecutionException, UserNoTFoundException {
 		VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
 		return JsonStream.serialize(visitedLocation.location);
 	}
 
 	@PostMapping(value = "/postPreferences", params = "userName")
-	public void postPreferences(@RequestParam String userName, @Valid @RequestBody UserNewPreferences userPreferences) {
+	public void postPreferences(@RequestParam String userName, @Valid @RequestBody UserNewPreferences userPreferences) throws UserNoTFoundException {
 		tourGuideService.updatePreferences(getUser(userName), userPreferences);
 	}
 
@@ -54,13 +56,13 @@ public class TourGuideController {
 	// The reward points for visiting each Attraction.
 	// Note: Attraction reward points can be gathered from RewardsCentral
 	@RequestMapping("/getNearbyAttractions")
-	public String getNearbyAttractions(@RequestParam String userName) throws InterruptedException, ExecutionException {
+	public String getNearbyAttractions(@RequestParam String userName) throws InterruptedException, ExecutionException, UserNoTFoundException {
 		VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
 		return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocation, getUser(userName)));
 	}
 
 	@RequestMapping("/getRewards")
-	public String getRewards(@RequestParam String userName) {
+	public String getRewards(@RequestParam String userName) throws UserNoTFoundException {
 		return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
 	}
 
@@ -83,12 +85,12 @@ public class TourGuideController {
 	}
 
 	@RequestMapping("/getTripDeals")
-	public String getTripDeals(@RequestParam String userName) {
+	public String getTripDeals(@RequestParam String userName) throws UserNoTFoundException {
 		List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
 		return JsonStream.serialize(providers);
 	}
 
-	private User getUser(String userName) {
+	private User getUser(String userName) throws UserNoTFoundException {
 		return tourGuideService.getUser(userName);
 	}
 
