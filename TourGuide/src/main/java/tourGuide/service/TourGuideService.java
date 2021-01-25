@@ -135,7 +135,7 @@ public class TourGuideService {
 		});
 	}
 
-	public void updatePreferences(User user, UserNewPreferences userNewPreferences) {
+	public UserPreferences updatePreferences(User user, UserNewPreferences userNewPreferences) {
 		CurrencyUnit currency = Monetary.getCurrency("USD");
 		UserPreferences userPreferences = user.getUserPreferences();
 		userPreferences.setAttractionProximity(userNewPreferences.getAttractionProximity());
@@ -147,6 +147,7 @@ public class TourGuideService {
 		userPreferences.setTripDuration(userNewPreferences.getTripDuration());
 		user.setUserPreferences(userPreferences);
 		internalUserMap.put(user.getUserName(), user);
+		return user.getUserPreferences();
 	}
 
 	/**********************************************************************************

@@ -19,6 +19,7 @@ import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
+import tourGuide.user.UserPreferences;
 import tripPricer.Provider;
 
 @RestController
@@ -40,8 +41,8 @@ public class TourGuideController {
 	}
 
 	@PostMapping(value = "/postPreferences", params = "userName")
-	public void postPreferences(@RequestParam String userName, @Valid @RequestBody UserNewPreferences userPreferences) throws UserNoTFoundException {
-		tourGuideService.updatePreferences(getUser(userName), userPreferences);
+	public UserPreferences postPreferences(@RequestParam String userName, @Valid @RequestBody UserNewPreferences userPreferences) throws UserNoTFoundException {
+		return tourGuideService.updatePreferences(getUser(userName), userPreferences);
 	}
 
 	// TODO: Change this method to no longer return a List of Attractions.
