@@ -7,7 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -114,16 +116,25 @@ public class TourGuideService {
 
 	public List<NearbyAttractions> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<NearbyAttractions> nearbyAttractions = new ArrayList<>();
+		Map<Double, NearbyAttractions> attractionSorted = new HashMap<>();
+		
 		for (Attraction attraction : gpsUtil.getAttractions()) {
 			NearbyAttractions nearByAttraction = new NearbyAttractions();
-			nearByAttraction.setDistance(rewardsService.getDistance(visitedLocation.location, attraction));
+			double distance = rewardsService.getDistance(visitedLocation.location, attraction);
+			nearByAttraction.setDistance(distance);
 			nearByAttraction.setLatitude(attraction.latitude);
 			nearByAttraction.setLongitude(attraction.longitude);
 			nearByAttraction.setRewardPoints(rewardsService.getRewardPoints(attraction, user));
 			nearByAttraction.setVisitedLocation(visitedLocation);
-			nearbyAttractions.add(nearByAttraction);
+			attractionSorted.put(distance, nearByAttraction);
 		}
-
+		int i = 5;
+		for (Entry<Double, NearbyAttractions> returnedAttraction : new TreeMap<>(attractionSorted).entrySet()) {
+			if (i != 0) {
+				nearbyAttractions.add(returnedAttraction.getValue());
+				i--;
+			} else break;
+		}
 		return nearbyAttractions;
 	}
 
