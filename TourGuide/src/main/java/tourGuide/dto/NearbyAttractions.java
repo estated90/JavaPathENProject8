@@ -1,83 +1,97 @@
 package tourGuide.dto;
 
-import gpsUtil.location.VisitedLocation;
-
 public class NearbyAttractions {
 
-    private double latitude;
-    private double longitude;
-    private VisitedLocation visitedLocation;
-    private double distance;
-    private int rewardPoints;
-
-    /**
-     * @return the latitude
-     */
-    public double getLatitude() {
-	return latitude;
-    }
-
-    /**
-     * @param latitude the latitude to set
-     */
-    public void setLatitude(double latitude) {
-	this.latitude = latitude;
-    }
-
-    /**
-     * @return the longitude
-     */
-    public double getLongitude() {
-	return longitude;
-    }
-
-    /**
-     * @param longitude the longitude to set
-     */
-    public void setLongitude(double longitude) {
-	this.longitude = longitude;
-    }
-
-    /**
-     * @return the visitedLocation
-     */
-    public VisitedLocation getVisitedLocation() {
-	return visitedLocation;
-    }
-
-    /**
-     * @param visitedLocation the visitedLocation to set
-     */
-    public void setVisitedLocation(VisitedLocation visitedLocation) {
-	this.visitedLocation = visitedLocation;
-    }
-
-    /**
-     * @return the distance
-     */
-    public double getDistance() {
-	return distance;
-    }
-
-    /**
-     * @param distance the distance to set
-     */
-    public void setDistance(double distance) {
-	this.distance = distance;
-    }
-
-    /**
-     * @return the rewardPoints
-     */
-    public int getRewardPoints() {
-	return rewardPoints;
-    }
-
-    /**
-     * @param rewardPoints the rewardPoints to set
-     */
-    public void setRewardPoints(int rewardPoints) {
-	this.rewardPoints = rewardPoints;
-    }
-
+	private String attractionName;
+	private double attractionLatitude;
+	private double attractionLongitude;
+	private double userLatitude;
+	private double userLongitude;
+	private double distance;
+	private int rewardPoints;
+	/**
+	 * @return the attractionName
+	 */
+	public String getAttractionName() {
+		return attractionName;
+	}
+	/**
+	 * @param attractionName the attractionName to set
+	 */
+	public void setAttractionName(String attractionName) {
+		this.attractionName = attractionName;
+	}
+	/**
+	 * @return the attractionLatitude
+	 */
+	public double getAttractionLatitude() {
+		return attractionLatitude;
+	}
+	/**
+	 * @param attractionLatitude the attractionLatitude to set
+	 */
+	public void setAttractionLatitude(double attractionLatitude) {
+		this.attractionLatitude = attractionLatitude;
+	}
+	/**
+	 * @return the attractionLongitude
+	 */
+	public double getAttractionLongitude() {
+		return attractionLongitude;
+	}
+	/**
+	 * @param attractionLongitude the attractionLongitude to set
+	 */
+	public void setAttractionLongitude(double attractionLongitude) {
+		this.attractionLongitude = attractionLongitude;
+	}
+	/**
+	 * @return the userLatitude
+	 */
+	public double getUserLatitude() {
+		return userLatitude;
+	}
+	/**
+	 * @param userLatitude the userLatitude to set
+	 */
+	public void setUserLatitude(double userLatitude) {
+		this.userLatitude = userLatitude;
+	}
+	/**
+	 * @return the userLongitude
+	 */
+	public double getUserLongitude() {
+		return userLongitude;
+	}
+	/**
+	 * @param userLongitude the userLongitude to set
+	 */
+	public void setUserLongitude(double userLongitude) {
+		this.userLongitude = userLongitude;
+	}
+	/**
+	 * @return the distance
+	 */
+	public double getDistance() {
+		return distance;
+	}
+	/**
+	 * @param distance the distance to set
+	 */
+	public void setDistance(double distance) {
+		this.distance = distance;
+	}
+	/**
+	 * @return the rewardPoints
+	 */
+	public int getRewardPoints() {
+		return rewardPoints;
+	}
+	/**
+	 * @param rewardPoints the rewardPoints to set
+	 */
+	public void setRewardPoints(int rewardPoints) {
+		this.rewardPoints = rewardPoints;
+	}
+	
 }

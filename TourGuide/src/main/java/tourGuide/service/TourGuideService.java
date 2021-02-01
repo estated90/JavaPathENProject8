@@ -14,6 +14,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -75,14 +79,16 @@ public class TourGuideService {
 	}
 
 	public User getUser(String userName) throws UserNoTFoundException {
+		logger.error("Retrieving user with username : {}", userName);
 		User user = internalUserMap.get(userName);
-		if (user!=null) {
+		if (user != null) {
+			logger.error("User found : {}", user);
 			return user;
-		}else {
-			logger.error("User do not exist in DB");
+		} else {
+			logger.error("User do not exist in DB : {}", userName);
 			throw new UserNoTFoundException(userName);
 		}
-		
+
 	}
 
 	public List<User> getAllUsers() {
@@ -117,15 +123,17 @@ public class TourGuideService {
 	public List<NearbyAttractions> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<NearbyAttractions> nearbyAttractions = new ArrayList<>();
 		Map<Double, NearbyAttractions> attractionSorted = new HashMap<>();
-		
+
 		for (Attraction attraction : gpsUtil.getAttractions()) {
 			NearbyAttractions nearByAttraction = new NearbyAttractions();
 			double distance = rewardsService.getDistance(visitedLocation.location, attraction);
+			nearByAttraction.setAttractionName(attraction.attractionName);
 			nearByAttraction.setDistance(distance);
-			nearByAttraction.setLatitude(attraction.latitude);
-			nearByAttraction.setLongitude(attraction.longitude);
+			nearByAttraction.setAttractionLatitude(attraction.latitude);
+			nearByAttraction.setAttractionLongitude(attraction.longitude);
 			nearByAttraction.setRewardPoints(rewardsService.getRewardPoints(attraction, user));
-			nearByAttraction.setVisitedLocation(visitedLocation);
+			nearByAttraction.setUserLatitude(visitedLocation.location.latitude);
+			nearByAttraction.setUserLongitude(visitedLocation.location.longitude);
 			attractionSorted.put(distance, nearByAttraction);
 		}
 		int i = 5;
@@ -133,7 +141,8 @@ public class TourGuideService {
 			if (i != 0) {
 				nearbyAttractions.add(returnedAttraction.getValue());
 				i--;
-			} else break;
+			} else
+				break;
 		}
 		return nearbyAttractions;
 	}

@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,56 +22,54 @@ import tourGuide.exception.UserNoTFoundException;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 import tourGuide.user.UserPreferences;
+import tourGuide.utils.Utils;
 import tripPricer.Provider;
 
 @RestController
 public class TourGuideController {
 
+	private Logger logger = LoggerFactory.getLogger(TourGuideController.class);
 	@Autowired
 	private TourGuideService tourGuideService;
+	@Autowired
+	private Utils utils;
 	
 
 	@RequestMapping("/")
 	public String index() {
+		logger.info("Redirecting to greeting message");
 		return "Greetings from TourGuide!";
 	}
 
 	@RequestMapping("/getLocation")
 	public String getLocation(@RequestParam String userName) throws InterruptedException, ExecutionException, UserNoTFoundException {
-		VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
+		logger.info("{} is using /getLocation", userName);
+		VisitedLocation visitedLocation = tourGuideService.getUserLocation(utils.getUser(userName));
 		return JsonStream.serialize(visitedLocation.location);
 	}
 
 	@PostMapping(value = "/postPreferences", params = "userName")
 	public UserPreferences postPreferences(@RequestParam String userName, @Valid @RequestBody UserNewPreferences userPreferences) throws UserNoTFoundException {
-		User user = getUser(userName);
+		logger.info("{} is using /postPreferences with {}", userName, userPreferences);
+		User user = utils.getUser(userName);
 	    return tourGuideService.updatePreferences(user, userPreferences);
 	}
 
-	// TODO: Change this method to no longer return a List of Attractions.
-	// Instead: Get the closest five tourist attractions to the user - no matter how
-	// far away they are.
-	// Return a new JSON object that contains:
-	// Name of Tourist attraction,
-	// Tourist attractions lat/long,
-	// The user's location lat/long,
-	// The distance in miles between the user's location and each of the
-	// attractions.
-	// The reward points for visiting each Attraction.
-	// Note: Attraction reward points can be gathered from RewardsCentral
 	@RequestMapping("/getNearbyAttractions")
 	public String getNearbyAttractions(@RequestParam String userName) throws InterruptedException, ExecutionException, UserNoTFoundException {
-		VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
-		return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocation, getUser(userName)));
+		logger.info("{} is using /getNearbyAttractions", userName);
+		VisitedLocation visitedLocation = tourGuideService.getUserLocation(utils.getUser(userName));
+		return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocation, utils.getUser(userName)));
 	}
 
 	@RequestMapping("/getRewards")
 	public String getRewards(@RequestParam String userName) throws UserNoTFoundException {
-		return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
+		return JsonStream.serialize(tourGuideService.getUserRewards(utils.getUser(userName)));
 	}
 
 	@RequestMapping("/getAllCurrentLocations")
 	public String getAllCurrentLocations() {
+		logger.info("User is using /getAllCurrentLocations");
 		// TODO: Get a list of every user's most recent location as JSON
 		// - Note: does not use gpsUtil to query for their current location,
 		// but rather gathers the user's current location from their stored location
@@ -88,12 +88,9 @@ public class TourGuideController {
 
 	@RequestMapping("/getTripDeals")
 	public String getTripDeals(@RequestParam String userName) throws UserNoTFoundException {
-		List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
+		logger.info("{} is using /getTripDeals", userName);
+		List<Provider> providers = tourGuideService.getTripDeals(utils.getUser(userName));
 		return JsonStream.serialize(providers);
-	}
-
-	private User getUser(String userName) throws UserNoTFoundException {
-		return tourGuideService.getUser(userName);
 	}
 
 }

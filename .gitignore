@@ -1,0 +1,8 @@
+.gradle/
+
+TourGuide/.gradle/
+TourGuide/.settings/
+TourGuide/.classpath
+TourGuide/.project
+TourGuide/.gitignore
+TourGuide/bin/
