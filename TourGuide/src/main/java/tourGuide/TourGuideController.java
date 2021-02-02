@@ -18,6 +18,7 @@ import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
 import tourGuide.dto.UserNewPreferences;
+import tourGuide.exception.LocalisationException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
@@ -64,11 +65,12 @@ public class TourGuideController {
 
 	@RequestMapping("/getRewards")
 	public String getRewards(@RequestParam String userName) throws UserNoTFoundException {
+		logger.info("{} is using /getRewards", userName);
 		return JsonStream.serialize(tourGuideService.getUserRewards(utils.getUser(userName)));
 	}
 
 	@RequestMapping("/getAllCurrentLocations")
-	public String getAllCurrentLocations() {
+	public String getAllCurrentLocations() throws LocalisationException {
 		logger.info("User is using /getAllCurrentLocations");
 		// TODO: Get a list of every user's most recent location as JSON
 		// - Note: does not use gpsUtil to query for their current location,
@@ -83,7 +85,7 @@ public class TourGuideController {
 		// ...
 		// }
 
-		return JsonStream.serialize("");
+		return JsonStream.serialize(tourGuideService.gettAllCurrentLocation());
 	}
 
 	@RequestMapping("/getTripDeals")

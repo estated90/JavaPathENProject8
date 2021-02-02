@@ -1,10 +1,12 @@
 package tourGuide;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -20,8 +22,10 @@ import org.junit.Test;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.dto.Geolocalisation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
+import tourGuide.exception.LocalisationException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
@@ -183,6 +187,35 @@ public class TestTourGuideService {
 		List<Provider> providers = tourGuideService.getTripDeals(user);
 
 		assertEquals(5, providers.size());
+	}
+
+	@Test
+	public void getAllUsersCurrentLocation() throws InterruptedException, ExecutionException, LocalisationException {
+		GpsUtil gpsUtil = new GpsUtil();
+		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
+		InternalTestHelper.setInternalUserNumber(0);
+		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, executorService);
+
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
+
+		tourGuideService.addUser(user);
+		tourGuideService.addUser(user2);
+
+		for (int i = 0; i < 3; i++) {
+			tourGuideService.trackUserLocation(user).get();
+			tourGuideService.trackUserLocation(user2).get();
+		}
+
+		Map<UUID, Geolocalisation> allUsers = tourGuideService.gettAllCurrentLocation();
+
+		tourGuideService.tracker.stopTracking();
+		
+		assertEquals(2, allUsers.size());
+		assertTrue(allUsers.containsKey(user.getUserId()));
+		assertNotNull(allUsers.get(user2.getUserId()).getLatitude());
+		assertNotNull(allUsers.get(user2.getUserId()).getLongitude());
+
 	}
 
 }

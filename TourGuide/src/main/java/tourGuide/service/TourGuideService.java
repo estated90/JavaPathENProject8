@@ -3,6 +3,8 @@ package tourGuide.service;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,10 +16,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,8 +31,10 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import tourGuide.dto.Geolocalisation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
+import tourGuide.exception.LocalisationException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
@@ -168,6 +168,31 @@ public class TourGuideService {
 		user.setUserPreferences(userPreferences);
 		internalUserMap.put(user.getUserName(), user);
 		return user.getUserPreferences();
+	}
+
+	public Map<UUID, Geolocalisation> gettAllCurrentLocation() throws LocalisationException {
+		logger.info("Getting all the user localisation in DB");
+		try {
+			Map<UUID, Geolocalisation> allUsersLocation = new HashMap<UUID, Geolocalisation>();
+			List<User> users = getAllUsers();
+			for (User user : users) {
+				List<VisitedLocation> visitedLocation = user.getVisitedLocations();
+				Comparator<VisitedLocation> byDate = new Comparator<VisitedLocation>() {
+					public int compare(VisitedLocation c1, VisitedLocation c2) {
+						return Long.valueOf(c1.timeVisited.getTime()).compareTo(c2.timeVisited.getTime());
+					}
+				};
+				Collections.sort(visitedLocation, byDate.reversed());
+				Geolocalisation geolocalisation = new Geolocalisation(visitedLocation.get(0).location.longitude,
+						visitedLocation.get(0).location.latitude);
+				allUsersLocation.put(user.getUserId(), geolocalisation);
+			}
+			logger.info("All the user localisation have been retrieved : {}", allUsersLocation);
+			return allUsersLocation;
+		} catch (Exception ex) {
+			logger.error("User localisations were not retrieved in DB");
+			throw new LocalisationException(ex);
+		}
 	}
 
 	/**********************************************************************************
