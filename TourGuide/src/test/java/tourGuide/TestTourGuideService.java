@@ -196,25 +196,25 @@ public class TestTourGuideService {
 		InternalTestHelper.setInternalUserNumber(0);
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, executorService);
 
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
+		User user = new User(UUID.randomUUID(), "test", "00099", "jon@tourGuide.com");
+		User user2 = new User(UUID.randomUUID(), "test2", "000100", "jon2@tourGuide.com");
 
 		tourGuideService.addUser(user);
 		tourGuideService.addUser(user2);
 
-		for (int i = 0; i < 3; i++) {
-			tourGuideService.trackUserLocation(user).get();
-			tourGuideService.trackUserLocation(user2).get();
+		for(int i=0;i<3;i++) {
+		    tourGuideService.trackUserLocation(user).get();
+		    tourGuideService.trackUserLocation(user2).get();
 		}
-
-		Map<UUID, Geolocalisation> allUsers = tourGuideService.gettAllCurrentLocation();
+		
+		Map<String, Geolocalisation> allUsers = tourGuideService.gettAllCurrentLocation();
 
 		tourGuideService.tracker.stopTracking();
 		
 		assertEquals(2, allUsers.size());
-		assertTrue(allUsers.containsKey(user.getUserId()));
-		assertNotNull(allUsers.get(user2.getUserId()).getLatitude());
-		assertNotNull(allUsers.get(user2.getUserId()).getLongitude());
+		assertTrue(allUsers.containsKey(user.getUserId().toString()));
+		assertNotNull(allUsers.get(user2.getUserId().toString()).getLatitude());
+		assertNotNull(allUsers.get(user2.getUserId().toString()).getLongitude());
 
 	}
 

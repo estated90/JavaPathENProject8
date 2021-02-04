@@ -84,7 +84,8 @@ public class TourGuideController {
 		// {"longitude":-48.188821,"latitude":74.84371}
 		// ...
 		// }
-
+		String out = JsonStream.serialize(tourGuideService.gettAllCurrentLocation());
+		System.out.println(out);
 		return JsonStream.serialize(tourGuideService.gettAllCurrentLocation());
 	}
 

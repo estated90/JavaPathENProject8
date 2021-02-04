@@ -170,10 +170,10 @@ public class TourGuideService {
 		return user.getUserPreferences();
 	}
 
-	public Map<UUID, Geolocalisation> gettAllCurrentLocation() throws LocalisationException {
+	public Map<String, Geolocalisation> gettAllCurrentLocation() throws LocalisationException {
 		logger.info("Getting all the user localisation in DB");
 		try {
-			Map<UUID, Geolocalisation> allUsersLocation = new HashMap<UUID, Geolocalisation>();
+			Map<String, Geolocalisation> allUsersLocation = new HashMap<String, Geolocalisation>();
 			List<User> users = getAllUsers();
 			for (User user : users) {
 				List<VisitedLocation> visitedLocation = user.getVisitedLocations();
@@ -185,7 +185,7 @@ public class TourGuideService {
 				Collections.sort(visitedLocation, byDate.reversed());
 				Geolocalisation geolocalisation = new Geolocalisation(visitedLocation.get(0).location.longitude,
 						visitedLocation.get(0).location.latitude);
-				allUsersLocation.put(user.getUserId(), geolocalisation);
+				allUsersLocation.put(user.getUserId().toString(), geolocalisation);
 			}
 			logger.info("All the user localisation have been retrieved : {}", allUsersLocation);
 			return allUsersLocation;
@@ -206,7 +206,8 @@ public class TourGuideService {
 	private final Map<String, User> internalUserMap = new HashMap<>();
 
 	private void initializeInternalUsers() {
-		IntStream.range(0, InternalTestHelper.getInternalUserNumber()).forEach(i -> {
+	    int internalUser = InternalTestHelper.getInternalUserNumber();
+		IntStream.range(0, internalUser).forEach(i -> {
 			String userName = "internalUser" + i;
 			String phone = "000";
 			String email = userName + "@tourGuide.com";
