@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,7 +47,7 @@ public class TestTourGuideService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, executorService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user).get();
+		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		tourGuideService.tracker.stopTracking();
 		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
@@ -104,11 +103,11 @@ public class TestTourGuideService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, executorService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		CompletableFuture<VisitedLocation> visitedLocation = tourGuideService.trackUserLocation(user);
+		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
 		tourGuideService.tracker.stopTracking();
 
-		assertEquals(user.getUserId(), visitedLocation.get().userId);
+		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
 
 	@Test
@@ -119,9 +118,9 @@ public class TestTourGuideService {
 		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, executorService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		CompletableFuture<VisitedLocation> visitedLocation = tourGuideService.trackUserLocation(user);
+		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
-		List<NearbyAttractions> attractions = tourGuideService.getNearByAttractions(visitedLocation.get(), user);
+		List<NearbyAttractions> attractions = tourGuideService.getNearByAttractions(visitedLocation, user);
 
 		tourGuideService.tracker.stopTracking();
 
@@ -203,8 +202,8 @@ public class TestTourGuideService {
 		tourGuideService.addUser(user2);
 
 		for(int i=0;i<3;i++) {
-		    tourGuideService.trackUserLocation(user).get();
-		    tourGuideService.trackUserLocation(user2).get();
+		    tourGuideService.trackUserLocation(user);
+		    tourGuideService.trackUserLocation(user2);
 		}
 		
 		Map<String, Geolocalisation> allUsers = tourGuideService.gettAllCurrentLocation();

@@ -8,14 +8,18 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -76,7 +80,7 @@ public class TourGuideService {
 	public VisitedLocation getUserLocation(User user) throws InterruptedException, ExecutionException {
 		logger.error("Retrieving user location for user : {}", user.getUserName());
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
-				: trackUserLocation(user).get();
+				: trackUserLocation(user);
 		return visitedLocation;
 	}
 
@@ -116,14 +120,35 @@ public class TourGuideService {
 		return providers;
 	}
 
-	public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
-		return CompletableFuture.supplyAsync(() -> {
-			VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-			user.addToVisitedLocations(visitedLocation);
-			rewardsService.calculateRewards(user);
-			return visitedLocation;
-		}, executorService);
+	public VisitedLocation trackUserLocation(User user) {
+		logger.info("Tracking location user : {}", user);
+		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+		user.addToVisitedLocations(visitedLocation);
+		rewardsService.calculateRewards(user);
+		return visitedLocation;
 
+	}
+
+	public void trackAllUserLocation(List<User> users) {
+		ExecutorService executorService = Executors.newFixedThreadPool(1000);
+		logger.info("Trackig all user location asynchroniously");
+		for (User user : users) {
+			Runnable runnableTask = () -> {
+				Locale.setDefault(new Locale("en", "US")); 	
+				trackUserLocation(user);
+			};
+			executorService.execute(runnableTask);
+		}
+		executorService.shutdown();
+		try {
+			if(!executorService.awaitTermination(15, TimeUnit.MINUTES)) {
+				logger.info("********************* TIME OUT - trackAllUserLocation - ********************");
+				executorService.shutdownNow();
+			}
+		} catch (InterruptedException ex) {
+			logger.error("Exception raised on the tracking location of all users");
+			executorService.shutdownNow();
+		}
 	}
 
 	public List<NearbyAttractions> getNearByAttractions(VisitedLocation visitedLocation, User user) {
