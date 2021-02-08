@@ -16,6 +16,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
@@ -49,7 +50,7 @@ public class TestPerformance {
 	 */
 
 	@Test
-	public void highVolumeTrackLocation() {
+	public void highVolumeTrackLocation() throws UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
 		// Users should be incremented up to 100,000, and test finishes within 15
@@ -74,7 +75,7 @@ public class TestPerformance {
 	}
 
 	@Test
-	public void highVolumeGetRewards() {
+	public void highVolumeGetRewards() throws UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
 

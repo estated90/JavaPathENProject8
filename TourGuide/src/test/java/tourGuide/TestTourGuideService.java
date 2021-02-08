@@ -76,7 +76,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void getAllUsers() {
+	public void getAllUsers() throws UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
 		InternalTestHelper.setInternalUserNumber(0);
@@ -145,7 +145,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void updatePreferences() {
+	public void updatePreferences() throws UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
 		InternalTestHelper.setInternalUserNumber(0);
@@ -190,7 +190,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void getAllUsersCurrentLocation() throws InterruptedException, ExecutionException, LocalisationException {
+	public void getAllUsersCurrentLocation() throws InterruptedException, ExecutionException, LocalisationException, UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), executorService);
 		InternalTestHelper.setInternalUserNumber(0);

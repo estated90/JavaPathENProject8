@@ -17,6 +17,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
@@ -55,7 +56,7 @@ public class TestRewardsService {
 	}
 
 	@Test
-	public void nearAllAttractions() {
+	public void nearAllAttractions() throws UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), this.executorService);
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);

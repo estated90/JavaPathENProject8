@@ -69,10 +69,12 @@ public class TourGuideService {
 	}
 
 	public List<UserReward> getUserRewards(User user) {
+		logger.error("Retrieving user with reward for user : {}", user.getUserName());
 		return user.getUserRewards();
 	}
 
 	public VisitedLocation getUserLocation(User user) throws InterruptedException, ExecutionException {
+		logger.error("Retrieving user location for user : {}", user.getUserName());
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
 				: trackUserLocation(user).get();
 		return visitedLocation;
@@ -91,13 +93,17 @@ public class TourGuideService {
 
 	}
 
-	public List<User> getAllUsers() {
+	public List<User> getAllUsers() throws UserNoTFoundException {
+		logger.error("Retrieving all users");
 		return internalUserMap.values().stream().collect(Collectors.toList());
 	}
 
-	public void addUser(User user) {
+	public void addUser(User user) throws UserNoTFoundException {
 		if (!internalUserMap.containsKey(user.getUserName())) {
 			internalUserMap.put(user.getUserName(), user);
+		} else {
+			logger.error("User already in DB : {}", user.getUserName());
+			throw new UserNoTFoundException("User already exists in DB");
 		}
 	}
 
@@ -206,7 +212,7 @@ public class TourGuideService {
 	private final Map<String, User> internalUserMap = new HashMap<>();
 
 	private void initializeInternalUsers() {
-	    int internalUser = InternalTestHelper.getInternalUserNumber();
+		int internalUser = InternalTestHelper.getInternalUserNumber();
 		IntStream.range(0, internalUser).forEach(i -> {
 			String userName = "internalUser" + i;
 			String phone = "000";
