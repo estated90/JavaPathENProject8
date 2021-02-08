@@ -12,25 +12,25 @@ import tourGuide.service.RewardsService;
 
 @Configuration
 public class TourGuideModule {
-	
-	@Bean
-	public ExecutorService getExecutorService() {
-		return Executors.newFixedThreadPool(1000);
-	}
-	
-	@Bean
-	public GpsUtil getGpsUtil() {
-		return new GpsUtil();
-	}
-	
-	@Bean
-	public RewardsService getRewardsService() {
-		return new RewardsService(getGpsUtil(), getRewardCentral(), this.getExecutorService());
-	}
-	
-	@Bean
-	public RewardCentral getRewardCentral() {
-		return new RewardCentral();
-	}
-	
+
+    @Bean
+    public ExecutorService getExecutorService() {
+	return Executors.newFixedThreadPool(1000);
+    }
+
+    @Bean
+    public GpsUtil getGpsUtil() {
+	return new GpsUtil();
+    }
+
+    @Bean
+    public RewardsService getRewardsService() {
+	return new RewardsService(getGpsUtil(), getRewardCentral(), this.getExecutorService());
+    }
+
+    @Bean
+    public RewardCentral getRewardCentral() {
+	return new RewardCentral();
+    }
+
 }

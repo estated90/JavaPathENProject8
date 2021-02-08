@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import org.junit.Before;
@@ -25,6 +26,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tourGuide.exception.ApiErrorResponse;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 
@@ -37,6 +41,7 @@ import tourGuide.user.User;
 @AutoConfigureMockMvc
 public class TourGuideControllerTest {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -82,8 +87,6 @@ public class TourGuideControllerTest {
 
     @Test
     public void whenGettingAllUsers_thenCorrectResponse() throws Exception {
-
-
 	User user = tourGuideService.getUser("internalUser80");
 	String id = user.getUserId().toString();
 	mockMvc.perform(MockMvcRequestBuilders.get("/getAllCurrentLocations"))
@@ -92,6 +95,15 @@ public class TourGuideControllerTest {
 		.andExpect(jsonPath("$."+id+".longitude").isNotEmpty())
 		.andExpect(jsonPath("$."+id+".latitude").isNotEmpty());
 
+    }
+    
+    @Test
+    public void whenPostRequestToPreferencessAndInvalidUser_thenThrowErrorResponse() throws Exception {
+	String preferences = "{\"attractionProximity\":\"1\",\"lowerPricePoint\":\"100\",\"highPricePoint\":\"1000\",\"tripDuration\":\"1\",\"ticketQuantity\":\"1\",\"numberOfAdults\":\"1\",\"numberOfChildren\":\"0\"}";
+	mockMvc.perform(MockMvcRequestBuilders.post("/postPreferences").param("userName", ("jon"))
+		.content(preferences).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)).andDo(print())
+		.andExpect(MockMvcResultMatchers.status().isNotFound())
+		.andExpect(content().json(MAPPER.writeValueAsString(new ApiErrorResponse("error-0001", "No User found with user name jon"))));
     }
 
 }
