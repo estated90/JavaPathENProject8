@@ -62,9 +62,8 @@ public class User {
 	visitedLocations.add(visitedLocation);
     }
 
-    @SuppressWarnings("unchecked")
     public List<VisitedLocation> getVisitedLocations() {
-	return (List<VisitedLocation>) ((ArrayList<VisitedLocation>) visitedLocations).clone();
+	return visitedLocations;
     }
 
     public void clearVisitedLocations() {
@@ -78,9 +77,8 @@ public class User {
 	}
     }
 
-    @SuppressWarnings("unchecked")
     public List<UserReward> getUserRewards() {
-	return (List<UserReward>) ((ArrayList<UserReward>) userRewards).clone();
+	return userRewards;
     }
 
     public UserPreferences getUserPreferences() {

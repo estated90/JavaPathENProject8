@@ -14,54 +14,54 @@ import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
 
 public class Tracker extends Thread {
-	private Logger logger = LoggerFactory.getLogger(Tracker.class);
-	private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(5);
-	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-	private final TourGuideService tourGuideService;
-	private boolean stop = false;
+    private Logger logger = LoggerFactory.getLogger(Tracker.class);
+    private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(5);
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final TourGuideService tourGuideService;
+    private boolean stop = false;
 
-	public Tracker(TourGuideService tourGuideService) {
-		this.tourGuideService = tourGuideService;
+    public Tracker(TourGuideService tourGuideService) {
+	this.tourGuideService = tourGuideService;
 
-		executorService.submit(this);
+	executorService.submit(this);
+    }
+
+    /**
+     * Assures to shut down the Tracker thread
+     */
+    public void stopTracking() {
+	stop = true;
+	executorService.shutdownNow();
+    }
+
+    @Override
+    public void run() {
+	StopWatch stopWatch = new StopWatch();
+	while (true) {
+	    if (Thread.currentThread().isInterrupted() || stop) {
+		logger.debug("Tracker stopping");
+		break;
+	    }
+
+	    List<User> users = null;
+	    try {
+		users = tourGuideService.getAllUsers();
+	    } catch (UserNoTFoundException e1) {
+		logger.error("Unable to recover all users for the tracker : {}", e1);
+	    }
+	    logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
+	    stopWatch.start();
+	    users.forEach(u -> tourGuideService.trackUserLocation(u));
+	    stopWatch.stop();
+	    logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+	    stopWatch.reset();
+	    try {
+		logger.debug("Tracker sleeping");
+		TimeUnit.SECONDS.sleep(trackingPollingInterval);
+	    } catch (InterruptedException e) {
+		break;
+	    }
 	}
 
-	/**
-	 * Assures to shut down the Tracker thread
-	 */
-	public void stopTracking() {
-		stop = true;
-		executorService.shutdownNow();
-	}
-
-	@Override
-	public void run() {
-		StopWatch stopWatch = new StopWatch();
-		while (true) {
-			if (Thread.currentThread().isInterrupted() || stop) {
-				logger.debug("Tracker stopping");
-				break;
-			}
-
-			List<User> users = null;
-			try {
-				users = tourGuideService.getAllUsers();
-			} catch (UserNoTFoundException e1) {
-				logger.error("Unable to recover all users for the tracker : {}", e1);
-			}
-			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
-			stopWatch.start();
-			users.forEach(u -> tourGuideService.trackUserLocation(u));
-			stopWatch.stop();
-			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
-			stopWatch.reset();
-			try {
-				logger.debug("Tracker sleeping");
-				TimeUnit.SECONDS.sleep(trackingPollingInterval);
-			} catch (InterruptedException e) {
-				break;
-			}
-		}
-
-	}
+    }
 }

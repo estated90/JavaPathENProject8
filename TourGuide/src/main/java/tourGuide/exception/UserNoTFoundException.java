@@ -8,18 +8,18 @@ public class UserNoTFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;  
 
-    private String id;
+    private String userName;
 
-    public UserNoTFoundException(String id) {
-        this.id = id;
+    public UserNoTFoundException(String userName) {
+        this.userName = userName;
     }
 
     public String getId() {
-        return id;
+        return userName;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setId(String userName) {
+        this.userName = userName;
     }
   
 }

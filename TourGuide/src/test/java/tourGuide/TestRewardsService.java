@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.junit.Test;
 
@@ -26,17 +24,16 @@ import tourGuide.user.UserReward;
 
 public class TestRewardsService {
 
-	private ExecutorService executorService = Executors.newFixedThreadPool(1000);
 	private static Locale locale = new Locale("en", "US");
 
 	@Test
 	public void userGetRewards() throws InterruptedException, ExecutionException {
 		Locale.setDefault(locale);
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), this.executorService);
+		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
 		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, this.executorService);
+		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtil.getAttractions().get(0);
@@ -50,7 +47,7 @@ public class TestRewardsService {
 	@Test
 	public void isWithinAttractionProximity() {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), this.executorService);
+		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		Attraction attraction = gpsUtil.getAttractions().get(0);
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
@@ -58,11 +55,11 @@ public class TestRewardsService {
 	@Test
 	public void nearAllAttractions() throws UserNoTFoundException {
 		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral(), this.executorService);
+		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 
 		InternalTestHelper.setInternalUserNumber(1);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService, this.executorService);
+		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 		rewardsService.calculateRewards(tourGuideService.getAllUsers().get(0));
 		List<UserReward> userRewards = tourGuideService.getUserRewards(tourGuideService.getAllUsers().get(0));
