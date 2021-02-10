@@ -44,7 +44,7 @@ public class TourGuideController {
 
     @RequestMapping("/getLocation")
     public String getLocation(@RequestParam String userName)
-	    throws InterruptedException, ExecutionException, UserNoTFoundException, RewardException {
+	    throws InterruptedException, ExecutionException, UserNoTFoundException, RewardException, LocalisationException {
 	logger.info("{} is using /getLocation", userName);
 	VisitedLocation visitedLocation = tourGuideService.getUserLocation(utils.getUser(userName));
 	return JsonStream.serialize(visitedLocation.location);
@@ -60,7 +60,7 @@ public class TourGuideController {
 
     @RequestMapping("/getNearbyAttractions")
     public String getNearbyAttractions(@RequestParam String userName)
-	    throws InterruptedException, ExecutionException, UserNoTFoundException, RewardException {
+	    throws InterruptedException, ExecutionException, UserNoTFoundException, RewardException, LocalisationException {
 	logger.info("{} is using /getNearbyAttractions", userName);
 	VisitedLocation visitedLocation = tourGuideService.getUserLocation(utils.getUser(userName));
 	return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocation, utils.getUser(userName)));
