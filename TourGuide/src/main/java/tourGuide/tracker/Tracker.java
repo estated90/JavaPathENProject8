@@ -9,6 +9,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
@@ -51,7 +52,13 @@ public class Tracker extends Thread {
 	    }
 	    logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
 	    stopWatch.start();
-	    users.forEach(u -> tourGuideService.trackUserLocation(u));
+	    users.forEach(u -> {
+		try {
+		    tourGuideService.trackUserLocation(u);
+		} catch (RewardException e1) {
+		    e1.printStackTrace();
+		}
+	    });
 	    stopWatch.stop();
 	    logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 	    stopWatch.reset();

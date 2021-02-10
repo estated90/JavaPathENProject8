@@ -15,6 +15,7 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.exception.RewardException;
 import tourGuide.user.User;
 import tourGuide.user.UserReward;
 import tourGuide.utils.Utils;
@@ -45,31 +46,43 @@ public class RewardsService {
 	proximityBuffer = defaultProximityBuffer;
     }
 
-    public void calculateRewards(User user) {
+    public void calculateRewards(User user) throws RewardException {
 	logger.info("Calculating reward for {}", user.getUserName());
-	CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
-	userLocations.addAll(user.getVisitedLocations());
-	CopyOnWriteArrayList<Attraction> attractions = new CopyOnWriteArrayList<>();
-	attractions.addAll(gpsUtil.getAttractions());
-	userLocations.stream().forEach(visitedLocation -> {
-	    attractions.stream().forEach(attraction -> {
-		if (user.getUserRewards().stream()
-			.noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))
-			&& nearAttraction(visitedLocation, attraction)) {
-		    user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-		}
+	try {
+	    CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
+	    userLocations.addAll(user.getVisitedLocations());
+	    CopyOnWriteArrayList<Attraction> attractions = new CopyOnWriteArrayList<>();
+	    attractions.addAll(gpsUtil.getAttractions());
+	    userLocations.stream().forEach(visitedLocation -> {
+		attractions.stream().forEach(attraction -> {
+		    if (user.getUserRewards().stream()
+			    .noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))
+			    && nearAttraction(visitedLocation, attraction)) {
+			user.addUserReward(
+				new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+		    }
+		});
 	    });
-	});
+	} catch (Exception ex) {
+	    logger.error("Error while calcuilating the reward for {} and error {}", user.getUserName(),
+		    ex.getMessage());
+	    throw new RewardException("Reward was not calculated for " + user.getUserName(), ex.getMessage());
+	}
     }
 
     public void calculateAllRewards(List<User> users) {
 	int minutesWait = 20;
-	ExecutorService executorService = Executors.newFixedThreadPool(50);
+	ExecutorService executorService = Executors.newFixedThreadPool(1000);
 	logger.info("Calculating  all the user rewards");
 	for (User user : users) {
 	    Runnable runnableTask = () -> {
 		Locale.setDefault(new Locale("en", "US"));
-		calculateRewards(user);
+		try {
+		    calculateRewards(user);
+		} catch (RewardException ex) {
+		    logger.error("Error while calcuilating the reward for {} and error {}", user.getUserName(),
+			    ex.getMessage());
+		}
 	    };
 	    executorService.execute(runnableTask);
 	}

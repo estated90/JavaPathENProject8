@@ -14,11 +14,11 @@ public class UserNoTFoundException extends RuntimeException {
         this.userName = userName;
     }
 
-    public String getId() {
+    public String getMessage() {
         return userName;
     }
 
-    public void setId(String userName) {
+    public void setMessage(String userName) {
         this.userName = userName;
     }
   

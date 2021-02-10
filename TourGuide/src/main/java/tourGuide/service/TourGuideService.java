@@ -37,6 +37,7 @@ import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.UserNoTFoundException;
+import tourGuide.exception.RewardException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -68,12 +69,16 @@ public class TourGuideService {
 	addShutDownHook();
     }
 
-    public List<UserReward> getUserRewards(User user) {
-	logger.error("Retrieving user with reward for user : {}", user.getUserName());
-	return user.getUserRewards();
+    public List<UserReward> getUserRewards(User user) throws RewardException {
+	try {
+	    logger.error("Retrieving user with reward for user : {}", user.getUserName());
+	    return user.getUserRewards();
+	} catch (Exception ex) {
+	    throw new RewardException("Reward was not found", ex.getMessage());
+	}
     }
 
-    public VisitedLocation getUserLocation(User user) throws InterruptedException, ExecutionException {
+    public VisitedLocation getUserLocation(User user) throws InterruptedException, ExecutionException, RewardException {
 	logger.error("Retrieving user location for user : {}", user.getUserName());
 	VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
 		: trackUserLocation(user);
@@ -116,7 +121,7 @@ public class TourGuideService {
 	return providers;
     }
 
-    public VisitedLocation trackUserLocation(User user) {
+    public VisitedLocation trackUserLocation(User user) throws RewardException {
 	logger.info("Tracking location user : {}", user.getUserName());
 	VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 	user.addToVisitedLocations(visitedLocation);
@@ -132,7 +137,12 @@ public class TourGuideService {
 	for (User user : users) {
 	    Runnable runnableTask = () -> {
 		Locale.setDefault(new Locale("en", "US"));
-		trackUserLocation(user);
+		try {
+		    trackUserLocation(user);
+		} catch (RewardException ex) {
+		    logger.error("Error while calcuilating the reward for {} and error {}", user.getUserName(), ex.getMessage());
+		    ex.printStackTrace();
+		}
 	    };
 	    executorService.execute(runnableTask);
 	}
