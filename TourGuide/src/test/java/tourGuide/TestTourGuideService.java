@@ -1,8 +1,8 @@
 package tourGuide;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +14,7 @@ import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 
 import org.javamoney.moneta.Money;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.VisitedLocation;

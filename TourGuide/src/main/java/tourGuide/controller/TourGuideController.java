@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,6 @@ import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
-import tourGuide.user.UserPreferences;
 import tourGuide.utils.Utils;
 import tripPricer.Provider;
 
@@ -51,11 +51,12 @@ public class TourGuideController {
     }
 
     @PostMapping(value = "/postPreferences", params = "userName")
-    public UserPreferences postPreferences(@RequestParam String userName,
+    public ResponseEntity<String> postPreferences(@RequestParam String userName,
 	    @Valid @RequestBody UserNewPreferences userPreferences) throws UserNoTFoundException {
 	logger.info("{} is using /postPreferences with {}", userName, userPreferences);
 	User user = utils.getUser(userName);
-	return tourGuideService.updatePreferences(user, userPreferences);
+	tourGuideService.updatePreferences(user, userPreferences);
+	return ResponseEntity.ok("Preferences updated");
     }
 
     @RequestMapping("/getNearbyAttractions")

@@ -12,16 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -36,7 +33,6 @@ import tourGuide.user.User;
  * @author nicol
  *
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TourGuideControllerTest {
@@ -46,13 +42,6 @@ public class TourGuideControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private TourGuideService tourGuideService;
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-    }
 
     /**
      * @throws java.lang.Exception
@@ -70,9 +59,9 @@ public class TourGuideControllerTest {
     }
 
     @Test
-    public void whenPostRequestToPreferencessAndValidPreferences_thenWrongResponse() throws Exception {
+    public void whenPostRequestToPreferencessAndInialidPreferences_thenWrongResponse() throws Exception {
 	String preferences = "{\"attractionProximity\":\"-1\",\"lowerPricePoint\":\"100000\",\"highPricePoint\":\"1000\",\"tripDuration\":\"0\",\"ticketQuantity\":\"0\",\"numberOfAdults\":\"0\",\"numberOfChildren\":\"-1\"}";
-	mockMvc.perform(MockMvcRequestBuilders.post("/postPreferences").param("userName", ("jon2")).content(preferences)
+	mockMvc.perform(MockMvcRequestBuilders.post("/postPreferences").param("userName", ("internalUser1")).content(preferences)
 		.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)).andDo(print())
 		.andExpect(MockMvcResultMatchers.status().isBadRequest())
 		.andExpect(jsonPath("$.timestamp", is(notNullValue()))).andExpect(jsonPath("$.status", is(400)))
