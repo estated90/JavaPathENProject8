@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -29,15 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
-import tourGuide.dto.Geolocalisation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
-import tourGuide.exception.UserNoTFoundException;
 import tourGuide.exception.RewardException;
+import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -165,28 +161,20 @@ public class TourGuideService {
 
 	public List<NearbyAttractions> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<NearbyAttractions> nearbyAttractions = new ArrayList<>();
-		Map<Double, NearbyAttractions> attractionSorted = new HashMap<>();
-
-		for (Attraction attraction : gpsUtil.getAttractions()) {
+		gpsUtil.getAttractions().forEach(attraction -> {
 			NearbyAttractions nearByAttraction = new NearbyAttractions();
-			double distance = rewardsService.getDistance(visitedLocation.location, attraction);
 			nearByAttraction.setAttractionName(attraction.attractionName);
-			nearByAttraction.setDistance(distance);
+			nearByAttraction.setDistance(rewardsService.getDistance(visitedLocation.location, attraction));
 			nearByAttraction.setAttractionLatitude(attraction.latitude);
 			nearByAttraction.setAttractionLongitude(attraction.longitude);
 			nearByAttraction.setRewardPoints(rewardsService.getRewardPoints(attraction, user));
 			nearByAttraction.setUserLatitude(visitedLocation.location.latitude);
 			nearByAttraction.setUserLongitude(visitedLocation.location.longitude);
-			attractionSorted.put(distance, nearByAttraction);
-		}
-		int i = 5;
-		for (Entry<Double, NearbyAttractions> returnedAttraction : new TreeMap<>(attractionSorted).entrySet()) {
-			if (i != 0) {
-				nearbyAttractions.add(returnedAttraction.getValue());
-				i--;
-			} else
-				break;
-		}
+			nearbyAttractions.add(nearByAttraction);
+		});
+		Collections.sort(nearbyAttractions, 
+                Comparator.comparingDouble(NearbyAttractions::getDistance)); 
+		nearbyAttractions.subList(5, nearbyAttractions.size()).clear();
 		return nearbyAttractions;
 	}
 
@@ -213,10 +201,10 @@ public class TourGuideService {
 		return user.getUserPreferences();
 	}
 
-	public Map<String, Geolocalisation> gettAllCurrentLocation() throws LocalisationException {
+	public Map<String, Location> gettAllCurrentLocation() throws LocalisationException {
 		logger.info("Getting all the user localisation in DB");
 		try {
-			Map<String, Geolocalisation> allUsersLocation = new HashMap<String, Geolocalisation>();
+			Map<String, Location> allUsersLocation = new HashMap<String, Location>();
 			List<User> users = getAllUsers();
 			for (User user : users) {
 				List<VisitedLocation> visitedLocation = user.getVisitedLocations();
@@ -226,9 +214,7 @@ public class TourGuideService {
 					}
 				};
 				Collections.sort(visitedLocation, byDate.reversed());
-				Geolocalisation geolocalisation = new Geolocalisation(visitedLocation.get(0).location.longitude,
-						visitedLocation.get(0).location.latitude);
-				allUsersLocation.put(user.getUserId().toString(), geolocalisation);
+				allUsersLocation.put(user.getUserId().toString(), visitedLocation.get(0).location);
 			}
 			logger.info("All the user localisation have been retrieved : {}", allUsersLocation);
 			return allUsersLocation;
