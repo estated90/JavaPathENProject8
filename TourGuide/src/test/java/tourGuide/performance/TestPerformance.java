@@ -17,9 +17,9 @@ import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.User;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
 
 @DisplayName("Overall performance tests")
 public class TestPerformance {

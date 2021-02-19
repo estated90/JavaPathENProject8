@@ -16,8 +16,8 @@ import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.exception.RewardException;
-import tourGuide.user.User;
-import tourGuide.user.UserReward;
+import tourGuide.model.User;
+import tourGuide.model.UserReward;
 import tourGuide.utils.Utils;
 
 @Service

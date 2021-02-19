@@ -22,8 +22,8 @@ import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
+import tourGuide.model.User;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
 import tourGuide.utils.Utils;
 import tripPricer.Provider;
 

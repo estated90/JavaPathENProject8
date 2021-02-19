@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tourGuide.exception.UserNoTFoundException;
+import tourGuide.model.User;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
 
 @Service
 public class Utils {

@@ -12,8 +12,8 @@ TourGuide/.gitignore
 TourGuide/bin/
 TourGuide/build
 
-gpsUtils/bin/
-gpsUtils/.gradle/
-gpsUtils/.settings/
-gpsUtils/.classpath
-gpsUtils/.project
+External API/gpsUtils/bin/
+External API/gpsUtils/.gradle/
+External API/gpsUtils/.settings/
+External API/gpsUtils/.classpath
+External API/gpsUtils/.project

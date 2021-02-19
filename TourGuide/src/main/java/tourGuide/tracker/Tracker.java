@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
+import tourGuide.model.User;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
 
 public class Tracker extends Thread {
     private Logger logger = LoggerFactory.getLogger(Tracker.class);

@@ -25,8 +25,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import tourGuide.exception.ApiErrorResponse;
+import tourGuide.model.User;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
 
 /**
  * @author nicol

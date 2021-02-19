@@ -27,10 +27,10 @@ import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.User;
+import tourGuide.model.UserPreferences;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
-import tourGuide.user.UserPreferences;
 import tripPricer.Provider;
 
 @DisplayName("Tour guide services Tests")
