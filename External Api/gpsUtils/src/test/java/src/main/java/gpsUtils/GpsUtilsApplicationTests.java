@@ -28,7 +28,7 @@ class GpsUtilsApplicationTests {
 	@Test
 	public void whenRequestLocalization_sentOk() throws Exception {
 		mockMvc.perform(
-				MockMvcRequestBuilders.get("/getUserLocation").param("uuid", ("bea60f6d-aa4b-496d-87da-4db04b99f2e5")))
+				MockMvcRequestBuilders.get("/getUserLocation").param("userId", ("bea60f6d-aa4b-496d-87da-4db04b99f2e5")))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(jsonPath("$.userId", is("bea60f6d-aa4b-496d-87da-4db04b99f2e5")))
 				.andExpect(jsonPath("$.location").isMap()).andExpect(jsonPath("$.location.longitude").isNotEmpty())

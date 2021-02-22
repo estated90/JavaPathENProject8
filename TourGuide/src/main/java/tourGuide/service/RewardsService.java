@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.exception.RewardException;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
+import tourGuide.model.VisitedLocation;
 import tourGuide.utils.Utils;
 
 @Service
@@ -96,7 +96,7 @@ public class RewardsService {
     }
 
     private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
-	return !(getDistance(attraction, visitedLocation.location) > proximityBuffer);
+	return !(getDistance(attraction, visitedLocation.getLocation()) > proximityBuffer);
     }
 
     public int getRewardPoints(Attraction attraction, User user) {

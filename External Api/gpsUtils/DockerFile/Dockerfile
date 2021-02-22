@@ -1,4 +1,4 @@
 FROM openjdk:8-jdk-alpine
 VOLUME /tmp
-COPY ./DockerFile/*.jar app.jar
+COPY ./jar/*.jar app.jar
 ENTRYPOINT ["java","-jar","app.jar"]

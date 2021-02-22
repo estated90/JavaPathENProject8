@@ -3,8 +3,6 @@ package src.main.java.gpsUtils.controller;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,8 @@ public class ControllerGpsUtils {
 	private GpsUtil gpsUtil;
 
 	@GetMapping("/getUserLocation")
-	public VisitedLocation getUserLocation(@Valid @RequestParam UUID uuid) {
+	public VisitedLocation getUserLocation(@RequestParam String userId) {
+		UUID uuid = UUID.fromString(userId);
 		logger.info("returning user location for user : {}", uuid);
 		return gpsUtil.getUserLocation(uuid);
 	}

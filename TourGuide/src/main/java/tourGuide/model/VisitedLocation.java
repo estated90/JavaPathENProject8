@@ -1,6 +1,6 @@
 package tourGuide.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 import gpsUtil.location.Location;
@@ -9,13 +9,13 @@ public class VisitedLocation {
 
     private UUID uuid;
     private Location location;
-    private LocalDate dateVisited;
+    private Date dateVisited;
     /**
      * @param uuid
      * @param location
      * @param dateVisited
      */
-    public VisitedLocation(UUID uuid, Location location, LocalDate dateVisited) {
+    public VisitedLocation(UUID uuid, Location location, Date dateVisited) {
 	super();
 	this.uuid = uuid;
 	this.location = location;
@@ -48,13 +48,13 @@ public class VisitedLocation {
     /**
      * @return the dateVisited
      */
-    public LocalDate getDateVisited() {
+    public Date getDateVisited() {
         return dateVisited;
     }
     /**
      * @param dateVisited the dateVisited to set
      */
-    public void setDateVisited(LocalDate dateVisited) {
+    public void setDateVisited(Date dateVisited) {
         this.dateVisited = dateVisited;
     }
     
