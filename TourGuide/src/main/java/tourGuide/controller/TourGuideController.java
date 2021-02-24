@@ -16,15 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jsoniter.output.JsonStream;
 
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
+import tourGuide.model.Attraction;
 import tourGuide.model.User;
+import tourGuide.model.VisitedLocation;
 import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.service.TourGuideService;
 import tourGuide.utils.Utils;
@@ -52,8 +54,14 @@ public class TourGuideController {
 	public String getLocation(@RequestParam String userName) throws InterruptedException, ExecutionException,
 			UserNoTFoundException, RewardException, LocalisationException {
 		logger.info("{} is using /getLocation", userName);
-		VisitedLocation visitedLocation = tourGuideService.getUserLocation(utils.getUser(userName));
-		return JsonStream.serialize(visitedLocation.location);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			String json = mapper.writeValueAsString(tourGuideService.getUserLocation(utils.getUser(userName)));
+			return json;
+		} catch (JsonProcessingException e) {
+			logger.error("System was enable to convert object to String");
+			return null;
+		}
 	}
 
 	@PostMapping(value = "/postPreferences", params = "userName")
@@ -95,8 +103,14 @@ public class TourGuideController {
 	@GetMapping("/trackUser")
 	public String trackUser(@RequestParam String userName) throws UserNoTFoundException, RewardException {
 		logger.info("{} is using /getTripDeals", userName);
-		VisitedLocation providers = tourGuideService.trackUserLocation(utils.getUser(userName));
-		return JsonStream.serialize(providers);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			String json = mapper.writeValueAsString(tourGuideService.trackUserLocation(utils.getUser(userName)));
+			return json;
+		} catch (JsonProcessingException e) {
+			logger.error("System was enable to convert object to String");
+			return null;
+		}
 	}
 	
 	@GetMapping("/getAttractions")

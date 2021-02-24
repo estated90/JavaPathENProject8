@@ -10,20 +10,25 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.Attraction;
 import tourGuide.model.User;
+import tourGuide.model.VisitedLocation;
+import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
 @DisplayName("Overall performance tests")
 public class TestPerformance {
 
+	@Autowired  
+	private GpsUtilFeign gpsUtilFeign;
+	
     //private ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
     /*
@@ -74,7 +79,7 @@ public class TestPerformance {
 
     @Test
     public void highVolumeGetRewards() throws UserNoTFoundException {
-	GpsUtil gpsUtil = new GpsUtil();
+    GpsUtil gpsUtil = new GpsUtil();
 	RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 	// Users should be incremented up to 100,000, and test finishes within 20 minutes
 	InternalTestHelper.setInternalUserNumber(1000);
@@ -82,7 +87,7 @@ public class TestPerformance {
 	stopWatch.start();
 	TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
-	Attraction attraction = gpsUtil.getAttractions().get(0);
+	Attraction attraction = gpsUtilFeign.getAttractions().get(0);
 	List<User> allUsers = new ArrayList<>();
 	allUsers = tourGuideService.getAllUsers();
 	allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));

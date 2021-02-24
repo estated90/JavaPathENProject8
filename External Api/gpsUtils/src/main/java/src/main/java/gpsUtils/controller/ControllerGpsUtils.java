@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jsoniter.output.JsonStream;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 
@@ -29,7 +29,15 @@ public class ControllerGpsUtils {
 	public String getUserLocation(@RequestParam String userId) {
 		UUID uuid = UUID.fromString(userId);
 		logger.info("returning user location for user : {}", uuid);
-		return JsonStream.serialize(gpsUtil.getUserLocation(uuid));
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			String json = mapper.writeValueAsString(gpsUtil.getUserLocation(uuid));
+			return json;
+		} catch (JsonProcessingException e) {
+			logger.error("System was enable to convert object to String");
+			return null;
+		}
+		
 	}
 
 	@GetMapping("/getAttractions")

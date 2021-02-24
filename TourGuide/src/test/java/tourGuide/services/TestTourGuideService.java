@@ -18,8 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
@@ -27,8 +25,10 @@ import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.Location;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
+import tourGuide.model.VisitedLocation;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
@@ -49,7 +49,7 @@ public class TestTourGuideService {
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		tourGuideService.tracker.stopTracking();
-		assertEquals(user.getUserId(), visitedLocation.userId);
+		assertEquals(user.getUserId(), visitedLocation.getUserId());
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class TestTourGuideService {
 
 		tourGuideService.tracker.stopTracking();
 
-		assertEquals(user.getUserId(), visitedLocation.userId);
+		assertEquals(user.getUserId(), visitedLocation.getUserId());
 	}
 
 	@Test
@@ -213,8 +213,8 @@ public class TestTourGuideService {
 
 		assertEquals(2, allUsers.size());
 		assertTrue(allUsers.containsKey(user.getUserId().toString()));
-		assertNotNull(allUsers.get(user2.getUserId().toString()).longitude);
-		assertNotNull(allUsers.get(user2.getUserId().toString()).latitude);
+		assertNotNull(allUsers.get(user2.getUserId().toString()).getLongitude());
+		assertNotNull(allUsers.get(user2.getUserId().toString()).getLatitude());
 
 	}
 

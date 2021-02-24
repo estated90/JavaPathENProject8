@@ -31,17 +31,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
+import tourGuide.model.Location;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
 import tourGuide.model.UserReward;
+import tourGuide.model.VisitedLocation;
 import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.tracker.Tracker;
 import tourGuide.utils.Utils;
@@ -135,16 +136,7 @@ public class TourGuideService {
 
 	public VisitedLocation trackUserLocation(User user) throws RewardException {
 		logger.info("Tracking location user : {}", user.getUserName());
-		String returnedValue = gpsUtilFeign.getUserLocation(user.getUserId().toString());
-		ObjectMapper objectMapper = new ObjectMapper();
-		VisitedLocation visitedLocation = null;
-		try {
-			visitedLocation = objectMapper.readValue(returnedValue, VisitedLocation.class);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		VisitedLocation visitedLocation = gpsUtilFeign.getUserLocation(user.getUserId().toString());
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
@@ -177,13 +169,13 @@ public class TourGuideService {
 		List<NearbyAttractions> nearbyAttractions = new ArrayList<>();
 		gpsUtilFeign.getAttractions().forEach(attraction -> {
 			NearbyAttractions nearByAttraction = new NearbyAttractions();
-			nearByAttraction.setAttractionName(attraction.attractionName);
-			nearByAttraction.setDistance(rewardsService.getDistance(visitedLocation.location, attraction));
-			nearByAttraction.setAttractionLatitude(attraction.latitude);
-			nearByAttraction.setAttractionLongitude(attraction.longitude);
+			nearByAttraction.setAttractionName(attraction.getAttractionName());
+			nearByAttraction.setDistance(rewardsService.getDistance(attraction, visitedLocation.getLocation()));
+			nearByAttraction.setAttractionLatitude(attraction.getLatitude());
+			nearByAttraction.setAttractionLongitude(attraction.getLongitude());
 			nearByAttraction.setRewardPoints(rewardsService.getRewardPoints(attraction, user));
-			nearByAttraction.setUserLatitude(visitedLocation.location.latitude);
-			nearByAttraction.setUserLongitude(visitedLocation.location.longitude);
+			nearByAttraction.setUserLatitude(visitedLocation.getLocation().getLatitude());
+			nearByAttraction.setUserLongitude(visitedLocation.getLocation().getLongitude());
 			nearbyAttractions.add(nearByAttraction);
 		});
 		Collections.sort(nearbyAttractions, Comparator.comparingDouble(NearbyAttractions::getDistance));
@@ -223,11 +215,11 @@ public class TourGuideService {
 				List<VisitedLocation> visitedLocation = user.getVisitedLocations();
 				Comparator<VisitedLocation> byDate = new Comparator<VisitedLocation>() {
 					public int compare(VisitedLocation c1, VisitedLocation c2) {
-						return Long.valueOf(c1.timeVisited.getTime()).compareTo(c2.timeVisited.getTime());
+						return Long.valueOf(c1.getTimeVisited().getTime()).compareTo(c2.getTimeVisited().getTime());
 					}
 				};
 				Collections.sort(visitedLocation, byDate.reversed());
-				allUsersLocation.put(user.getUserId().toString(), visitedLocation.get(0).location);
+				allUsersLocation.put(user.getUserId().toString(), visitedLocation.get(0).getLocation());
 			}
 			logger.info("All the user localisation have been retrieved : {}", allUsersLocation);
 			return allUsersLocation;

@@ -8,33 +8,36 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
 import rewardCentral.RewardCentral;
 import tourGuide.exception.RewardException;
+import tourGuide.model.Attraction;
+import tourGuide.model.Location;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
-import gpsUtil.location.VisitedLocation;
+import tourGuide.model.VisitedLocation;
+import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.utils.Utils;
 
 @Service
 public class RewardsService {
-    private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
+   
+	private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     private Logger logger = LoggerFactory.getLogger(RewardsService.class);
+	@Autowired
+	private GpsUtilFeign gpsUtilFeign;
     @SuppressWarnings("unused")
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     // proximity in miles
     private int defaultProximityBuffer = 10;
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
-    private final GpsUtil gpsUtil;
     private final RewardCentral rewardsCentral;
 
     public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
-	this.gpsUtil = gpsUtil;
 	this.rewardsCentral = rewardCentral;
     }
 
@@ -51,12 +54,11 @@ public class RewardsService {
 	try {
 	    CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
 	    userLocations.addAll(user.getVisitedLocations());
-	    CopyOnWriteArrayList<Attraction> attractions = new CopyOnWriteArrayList<>();
-	    attractions.addAll(gpsUtil.getAttractions());
+	    List<Attraction> attractions = gpsUtilFeign.getAttractions();
 	    userLocations.stream().forEach(visitedLocation -> {
 		attractions.stream().forEach(attraction -> {
 		    if (user.getUserRewards().stream()
-			    .noneMatch(r -> r.attraction.attractionName.equals(attraction.attractionName))
+			    .noneMatch(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
 			    && nearAttraction(visitedLocation, attraction)) {
 			user.addUserReward(
 				new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
@@ -96,18 +98,18 @@ public class RewardsService {
     }
 
     private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
-	return !(getDistance(attraction, visitedLocation.location) > proximityBuffer);
+	return !(getDistance(attraction, visitedLocation.getLocation()) > proximityBuffer);
     }
 
     public int getRewardPoints(Attraction attraction, User user) {
 	return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
     }
 
-    public double getDistance(Location loc1, Location loc2) {
-	double lat1 = Math.toRadians(loc1.latitude);
-	double lon1 = Math.toRadians(loc1.longitude);
-	double lat2 = Math.toRadians(loc2.latitude);
-	double lon2 = Math.toRadians(loc2.longitude);
+    public double getDistance(Attraction attraction, Location loc2) {
+	double lat1 = Math.toRadians(attraction.getLatitude());
+	double lon1 = Math.toRadians(attraction.getLongitude());
+	double lat2 = Math.toRadians(loc2.getLatitude());
+	double lon2 = Math.toRadians(loc2.getLongitude());
 
 	double angle = Math
 		.acos(Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));

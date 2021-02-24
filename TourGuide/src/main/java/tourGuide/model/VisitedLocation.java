@@ -3,8 +3,6 @@ package tourGuide.model;
 import java.util.Date;
 import java.util.UUID;
 
-import gpsUtil.location.Location;
-
 public class VisitedLocation {
 
 	private UUID userId;
