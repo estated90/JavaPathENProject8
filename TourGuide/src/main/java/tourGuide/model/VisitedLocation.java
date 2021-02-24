@@ -7,57 +7,63 @@ import gpsUtil.location.Location;
 
 public class VisitedLocation {
 
-    private UUID uuid;
-    private Location location;
-    private Date dateVisited;
-    /**
-     * @param uuid
-     * @param location
-     * @param dateVisited
-     */
-    public VisitedLocation(UUID uuid, Location location, Date dateVisited) {
-	super();
-	this.uuid = uuid;
-	this.location = location;
-	this.dateVisited = dateVisited;
-    }
-    /**
-     * @return the uuid
-     */
-    public UUID getUuid() {
-        return uuid;
-    }
-    /**
-     * @param uuid the uuid to set
-     */
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-    /**
-     * @return the location
-     */
-    public Location getLocation() {
-        return location;
-    }
-    /**
-     * @param location the location to set
-     */
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-    /**
-     * @return the dateVisited
-     */
-    public Date getDateVisited() {
-        return dateVisited;
-    }
-    /**
-     * @param dateVisited the dateVisited to set
-     */
-    public void setDateVisited(Date dateVisited) {
-        this.dateVisited = dateVisited;
-    }
-    
-    
-    
+	private UUID userId;
+	private Location location;
+	private Date timeVisited;
+	
+	public VisitedLocation() {
+		super();
+	}
+
+	public VisitedLocation(UUID userId, Location location, Date timeVisited) {
+		super();
+		this.userId = userId;
+		this.location = location;
+		this.timeVisited = timeVisited;
+	}
+
+	/**
+	 * @return the userId
+	 */
+	public UUID getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(UUID userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * @return the location
+	 */
+	public Location getLocation() {
+		return location;
+	}
+
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	/**
+	 * @return the timeVisited
+	 */
+	public Date getTimeVisited() {
+		return timeVisited;
+	}
+
+	/**
+	 * @param timeVisited the timeVisited to set
+	 */
+	public void setTimeVisited(Date timeVisited) {
+		this.timeVisited = timeVisited;
+	}
+	
+	
+	
 }

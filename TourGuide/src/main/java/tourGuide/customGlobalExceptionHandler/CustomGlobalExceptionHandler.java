@@ -1,4 +1,4 @@
-package tourGuide.CustomGlobalExceptionHandler;
+package tourGuide.customGlobalExceptionHandler;
 
 import java.io.IOException;
 import java.util.Date;

@@ -17,7 +17,7 @@ import rewardCentral.RewardCentral;
 import tourGuide.exception.RewardException;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
-import tourGuide.model.VisitedLocation;
+import gpsUtil.location.VisitedLocation;
 import tourGuide.utils.Utils;
 
 @Service
@@ -96,7 +96,7 @@ public class RewardsService {
     }
 
     private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
-	return !(getDistance(attraction, visitedLocation.getLocation()) > proximityBuffer);
+	return !(getDistance(attraction, visitedLocation.location) > proximityBuffer);
     }
 
     public int getRewardPoints(Attraction attraction, User user) {

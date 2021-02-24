@@ -27,8 +27,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Location;
+import gpsUtil.location.VisitedLocation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
@@ -38,7 +42,6 @@ import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
 import tourGuide.model.UserReward;
-import tourGuide.model.VisitedLocation;
 import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.tracker.Tracker;
 import tourGuide.utils.Utils;
@@ -49,7 +52,6 @@ import tripPricer.TripPricer;
 public class TourGuideService {
 	@Autowired
 	private GpsUtilFeign gpsUtilFeign;
-	private GpsUtil gpsUtil;
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	private final RewardsService rewardsService;
 	private final TripPricer tripPricer = new TripPricer();
@@ -133,7 +135,16 @@ public class TourGuideService {
 
 	public VisitedLocation trackUserLocation(User user) throws RewardException {
 		logger.info("Tracking location user : {}", user.getUserName());
-		VisitedLocation visitedLocation = gpsUtilFeign.getUserLocation(user.getUserId().toString());
+		String returnedValue = gpsUtilFeign.getUserLocation(user.getUserId().toString());
+		ObjectMapper objectMapper = new ObjectMapper();
+		VisitedLocation visitedLocation = null;
+		try {
+			visitedLocation = objectMapper.readValue(returnedValue, VisitedLocation.class);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
@@ -164,16 +175,15 @@ public class TourGuideService {
 
 	public List<NearbyAttractions> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<NearbyAttractions> nearbyAttractions = new ArrayList<>();
-		//TODO bug occuring here
 		gpsUtilFeign.getAttractions().forEach(attraction -> {
 			NearbyAttractions nearByAttraction = new NearbyAttractions();
 			nearByAttraction.setAttractionName(attraction.attractionName);
-			nearByAttraction.setDistance(rewardsService.getDistance(visitedLocation.getLocation(), attraction));
+			nearByAttraction.setDistance(rewardsService.getDistance(visitedLocation.location, attraction));
 			nearByAttraction.setAttractionLatitude(attraction.latitude);
 			nearByAttraction.setAttractionLongitude(attraction.longitude);
 			nearByAttraction.setRewardPoints(rewardsService.getRewardPoints(attraction, user));
-			nearByAttraction.setUserLatitude(visitedLocation.getLocation().latitude);
-			nearByAttraction.setUserLongitude(visitedLocation.getLocation().longitude);
+			nearByAttraction.setUserLatitude(visitedLocation.location.latitude);
+			nearByAttraction.setUserLongitude(visitedLocation.location.longitude);
 			nearbyAttractions.add(nearByAttraction);
 		});
 		Collections.sort(nearbyAttractions, Comparator.comparingDouble(NearbyAttractions::getDistance));
@@ -213,11 +223,11 @@ public class TourGuideService {
 				List<VisitedLocation> visitedLocation = user.getVisitedLocations();
 				Comparator<VisitedLocation> byDate = new Comparator<VisitedLocation>() {
 					public int compare(VisitedLocation c1, VisitedLocation c2) {
-						return Long.valueOf(c1.getDateVisited().getTime()).compareTo(c2.getDateVisited().getTime());
+						return Long.valueOf(c1.timeVisited.getTime()).compareTo(c2.timeVisited.getTime());
 					}
 				};
 				Collections.sort(visitedLocation, byDate.reversed());
-				allUsersLocation.put(user.getUserId().toString(), visitedLocation.get(0).getLocation());
+				allUsersLocation.put(user.getUserId().toString(), visitedLocation.get(0).location);
 			}
 			logger.info("All the user localisation have been retrieved : {}", allUsersLocation);
 			return allUsersLocation;

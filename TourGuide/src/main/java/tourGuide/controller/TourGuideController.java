@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,16 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jsoniter.output.JsonStream;
 
+import gpsUtil.location.Attraction;
+import gpsUtil.location.VisitedLocation;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.model.User;
-import tourGuide.model.VisitedLocation;
+import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.service.TourGuideService;
 import tourGuide.utils.Utils;
 import tripPricer.Provider;
 
+@RefreshScope
 @RestController
 public class TourGuideController {
 
@@ -35,6 +39,8 @@ public class TourGuideController {
 	private TourGuideService tourGuideService;
 	@Autowired
 	private Utils utils;
+	@Autowired
+	private GpsUtilFeign gpsUtilFeign;
 
 	@GetMapping("/")
 	public String index() {
@@ -47,7 +53,7 @@ public class TourGuideController {
 			UserNoTFoundException, RewardException, LocalisationException {
 		logger.info("{} is using /getLocation", userName);
 		VisitedLocation visitedLocation = tourGuideService.getUserLocation(utils.getUser(userName));
-		return JsonStream.serialize(visitedLocation.getLocation());
+		return JsonStream.serialize(visitedLocation.location);
 	}
 
 	@PostMapping(value = "/postPreferences", params = "userName")
@@ -91,6 +97,12 @@ public class TourGuideController {
 		logger.info("{} is using /getTripDeals", userName);
 		VisitedLocation providers = tourGuideService.trackUserLocation(utils.getUser(userName));
 		return JsonStream.serialize(providers);
+	}
+	
+	@GetMapping("/getAttractions")
+	public List<Attraction> getTripDeals() throws UserNoTFoundException {
+		
+		return gpsUtilFeign.getAttractions();
 	}
 
 }
