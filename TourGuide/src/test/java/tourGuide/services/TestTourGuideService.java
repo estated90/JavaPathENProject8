@@ -14,11 +14,14 @@ import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 
 import org.javamoney.moneta.Money;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import gpsUtil.GpsUtil;
-import rewardCentral.RewardCentral;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
@@ -29,24 +32,41 @@ import tourGuide.model.Location;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
 import tourGuide.model.VisitedLocation;
-import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
 
 @DisplayName("Tour guide services Tests")
+@SpringBootTest
 public class TestTourGuideService {
 
 	private static Locale locale = new Locale("en", "US");
+	@Autowired
+	private TourGuideService tourGuideService;
+	private User user;
+	private User user2;
+	
+	@BeforeAll
+	public static void setUp() {
+		InternalTestHelper.setInternalUserNumber(0);
+		Locale.setDefault(locale);
+	}
+	
+	@BeforeEach
+	public void setUpBeforeEach() {
+		user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
+		tourGuideService.addUser(user);
+		tourGuideService.addUser(user2);
+	}
+	
+	@AfterEach
+	public void cleanUp() {
+		tourGuideService.getInternalUserMap().remove(user.getUserName());
+		tourGuideService.getInternalUserMap().remove(user2.getUserName());
+	}
 
 	@Test
 	public void getUserLocation() throws InterruptedException, ExecutionException, RewardException {
-		Locale.setDefault(locale);
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		tourGuideService.tracker.stopTracking();
 		assertEquals(user.getUserId(), visitedLocation.getUserId());
@@ -54,39 +74,24 @@ public class TestTourGuideService {
 
 	@Test
 	public void addUser() throws UserNoTFoundException {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
-
-		tourGuideService.addUser(user);
-		tourGuideService.addUser(user2);
-
+		User user3 = new User(UUID.randomUUID(), "jon3", "000", "jon2@tourGuide.com");
+		tourGuideService.addUser(user3);
+		
 		User retrivedUser = tourGuideService.getUser(user.getUserName());
 		User retrivedUser2 = tourGuideService.getUser(user2.getUserName());
+		User retrivedUser3 = tourGuideService.getUser(user3.getUserName());
 
 		tourGuideService.tracker.stopTracking();
 
 		assertEquals(user, retrivedUser);
 		assertEquals(user2, retrivedUser2);
+		assertEquals(user3, retrivedUser3);
+		
+		tourGuideService.getInternalUserMap().remove(user3.getUserName());
 	}
 
 	@Test
 	public void getAllUsers() throws UserNoTFoundException {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		User user2 = new User(UUID.randomUUID(), "jon2", "000", "jon2@tourGuide.com");
-
-		tourGuideService.addUser(user);
-		tourGuideService.addUser(user2);
-
 		List<User> allUsers = tourGuideService.getAllUsers();
 
 		tourGuideService.tracker.stopTracking();
@@ -97,12 +102,6 @@ public class TestTourGuideService {
 
 	@Test
 	public void trackUser() throws InterruptedException, ExecutionException, RewardException {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
 		tourGuideService.tracker.stopTracking();
@@ -112,12 +111,6 @@ public class TestTourGuideService {
 
 	@Test
 	public void getNearbyAttractions() throws InterruptedException, ExecutionException, RewardException {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
 		List<NearbyAttractions> attractions = tourGuideService.getNearByAttractions(visitedLocation, user);
@@ -129,13 +122,6 @@ public class TestTourGuideService {
 
 	@Test
 	public void getTripDeals() {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-
 		List<Provider> providers = tourGuideService.getTripDeals(user);
 
 		tourGuideService.tracker.stopTracking();
@@ -145,14 +131,6 @@ public class TestTourGuideService {
 
 	@Test
 	public void updatePreferences() throws UserNoTFoundException {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		tourGuideService.addUser(user);
-
 		List<User> allUsers = tourGuideService.getAllUsers();
 		user = allUsers.get(0);
 		UserPreferences userPreferences = user.getUserPreferences();
@@ -191,16 +169,6 @@ public class TestTourGuideService {
 	@Test
 	public void getAllUsersCurrentLocation() throws InterruptedException, ExecutionException, LocalisationException,
 			UserNoTFoundException, RewardException {
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-		InternalTestHelper.setInternalUserNumber(0);
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
-		User user = new User(UUID.randomUUID(), "test", "00099", "jon@tourGuide.com");
-		User user2 = new User(UUID.randomUUID(), "test2", "000100", "jon2@tourGuide.com");
-
-		tourGuideService.addUser(user);
-		tourGuideService.addUser(user2);
 
 		for (int i = 0; i < 3; i++) {
 			tourGuideService.trackUserLocation(user);
@@ -211,7 +179,7 @@ public class TestTourGuideService {
 
 		tourGuideService.tracker.stopTracking();
 
-		assertEquals(2, allUsers.size());
+		assertEquals(3, allUsers.size());
 		assertTrue(allUsers.containsKey(user.getUserId().toString()));
 		assertNotNull(allUsers.get(user2.getUserId().toString()).getLongitude());
 		assertNotNull(allUsers.get(user2.getUserId().toString()).getLatitude());

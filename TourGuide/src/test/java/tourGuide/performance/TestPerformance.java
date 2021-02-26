@@ -5,15 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import gpsUtil.GpsUtil;
-import rewardCentral.RewardCentral;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.Attraction;
@@ -24,10 +25,22 @@ import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
 @DisplayName("Overall performance tests")
+@SpringBootTest
 public class TestPerformance {
 
 	@Autowired  
 	private GpsUtilFeign gpsUtilFeign;
+	@Autowired
+	private TourGuideService tourGuideService;
+	@Autowired
+	private RewardsService rewardsService;
+	private static Locale locale = new Locale("en", "US");
+	
+	@BeforeAll
+	public static void setUp() {
+		InternalTestHelper.setInternalUserNumber(100000);
+		Locale.setDefault(locale);
+	}
 	
     //private ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
@@ -56,13 +69,6 @@ public class TestPerformance {
 
     @Test
     public void highVolumeTrackLocation() throws UserNoTFoundException {
-	GpsUtil gpsUtil = new GpsUtil();
-	RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-	// Users should be incremented up to 100,000, and test finishes within 15
-	// minutes
-	InternalTestHelper.setInternalUserNumber(1000);
-	TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
 	List<User> allUsers = new ArrayList<>();
 	allUsers = tourGuideService.getAllUsers();
 
@@ -79,13 +85,8 @@ public class TestPerformance {
 
     @Test
     public void highVolumeGetRewards() throws UserNoTFoundException {
-    GpsUtil gpsUtil = new GpsUtil();
-	RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
-	// Users should be incremented up to 100,000, and test finishes within 20 minutes
-	InternalTestHelper.setInternalUserNumber(1000);
 	StopWatch stopWatch = new StopWatch();
 	stopWatch.start();
-	TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
 
 	Attraction attraction = gpsUtilFeign.getAttractions().get(0);
 	List<User> allUsers = new ArrayList<>();

@@ -32,17 +32,25 @@ public class ControllerGpsUtils {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			String json = mapper.writeValueAsString(gpsUtil.getUserLocation(uuid));
+			logger.info("Data were successfully retrieved");
 			return json;
 		} catch (JsonProcessingException e) {
 			logger.error("System was enable to convert object to String");
 			return null;
 		}
-		
+
 	}
 
 	@GetMapping("/getAttractions")
 	public List<Attraction> getAttreactions() {
-		List<Attraction> attractions = gpsUtil.getAttractions();
+		logger.info("returning all attractions");
+		List<Attraction> attractions = null;
+		try {
+			attractions = gpsUtil.getAttractions();
+		} catch (Exception ex) {
+			logger.error("error while retrieving attractions");
+			logger.error(ex.getMessage());
+		}
 		return attractions;
 	}
 

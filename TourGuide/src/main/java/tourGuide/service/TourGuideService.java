@@ -27,11 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import gpsUtil.GpsUtil;
-
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
@@ -59,7 +54,7 @@ public class TourGuideService {
 	public final Tracker tracker;
 	boolean testMode = true;
 
-	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
+	public TourGuideService(RewardsService rewardsService) {
 		this.rewardsService = rewardsService;
 		if (testMode) {
 			logger.info("TestMode enabled");
@@ -89,6 +84,7 @@ public class TourGuideService {
 			return visitedLocation;
 		} catch (Exception ex) {
 			logger.error("Localisation of user {} was not retrieved properly", user.getUserName());
+			logger.error(ex.getMessage());
 			throw new LocalisationException("the localization of user was not retrieved");
 		}
 	}
@@ -140,7 +136,7 @@ public class TourGuideService {
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
-
+ 
 	}
 
 	public void trackAllUserLocation(List<User> users) {
@@ -238,6 +234,13 @@ public class TourGuideService {
 	// Database connection will be used for external users, but for testing purposes
 	// internal users are provided and stored in memory
 	private final Map<String, User> internalUserMap = new HashMap<>();
+
+	/**
+	 * @return the internalUserMap
+	 */
+	public Map<String, User> getInternalUserMap() {
+		return internalUserMap;
+	}
 
 	private void initializeInternalUsers() {
 		int internalUser = InternalTestHelper.getInternalUserNumber();
