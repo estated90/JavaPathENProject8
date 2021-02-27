@@ -1,5 +1,8 @@
 package tourGuide.model;
 
+import SharedObject.model.Attraction;
+import SharedObject.model.VisitedLocation;
+
 public class UserReward {
 
 	public final VisitedLocation visitedLocation;

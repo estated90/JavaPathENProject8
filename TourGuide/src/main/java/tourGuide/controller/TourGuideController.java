@@ -20,13 +20,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jsoniter.output.JsonStream;
 
+import SharedObject.model.Attraction;
+import SharedObject.model.VisitedLocation;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
-import tourGuide.model.Attraction;
 import tourGuide.model.User;
-import tourGuide.model.VisitedLocation;
 import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.service.TourGuideService;
 import tourGuide.utils.Utils;

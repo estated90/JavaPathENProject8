@@ -22,16 +22,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import SharedObject.model.Location;
+import SharedObject.model.VisitedLocation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.Location;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
-import tourGuide.model.VisitedLocation;
 import tourGuide.service.TourGuideService;
 import tripPricer.Provider;
 

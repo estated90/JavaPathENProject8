@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import rewardCentral.RewardCentral;
+import SharedObject.model.Attraction;
+import SharedObject.model.Location;
+import SharedObject.model.VisitedLocation;
 import tourGuide.exception.RewardException;
-import tourGuide.model.Attraction;
-import tourGuide.model.Location;
 import tourGuide.model.User;
 import tourGuide.model.UserReward;
-import tourGuide.model.VisitedLocation;
 import tourGuide.proxies.GpsUtilFeign;
+import tourGuide.proxies.RewardCentralFeign;
 import tourGuide.utils.Utils;
 
 @Service
@@ -34,11 +34,7 @@ public class RewardsService {
 	private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
-	private final RewardCentral rewardsCentral;
-
-	public RewardsService(RewardCentral rewardCentral) {
-		this.rewardsCentral = rewardCentral;
-	}
+	private RewardCentralFeign rewardCentralFeign;
 
 	public void setProximityBuffer(int proximityBuffer) {
 		this.proximityBuffer = proximityBuffer;
@@ -124,7 +120,7 @@ public class RewardsService {
 	}
 
 	public int getRewardPoints(Attraction attraction, User user) {
-		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+		return rewardCentralFeign.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
 	}
 
 	public double getDistance(Attraction attraction, Location loc2) {

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import tourGuide.model.Attraction;
-import tourGuide.model.VisitedLocation;
+import SharedObject.model.Attraction;
+import SharedObject.model.VisitedLocation;
 
 @Service
 @FeignClient(value = "microservice-gpsUtil", url = "http://localhost:8081")

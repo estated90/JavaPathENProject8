@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
+import gpsUtil.location.VisitedLocation;
 
 @RestController
 public class ControllerGpsUtils {
@@ -26,18 +25,18 @@ public class ControllerGpsUtils {
 	private GpsUtil gpsUtil;
 
 	@RequestMapping(value = "/getUserLocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String getUserLocation(@RequestParam String userId) {
+	public VisitedLocation getUserLocation(@RequestParam String userId) {
 		UUID uuid = UUID.fromString(userId);
 		logger.info("returning user location for user : {}", uuid);
-		ObjectMapper mapper = new ObjectMapper();
+		VisitedLocation visitedLocation = null;
 		try {
-			String json = mapper.writeValueAsString(gpsUtil.getUserLocation(uuid));
-			logger.info("Data were successfully retrieved");
-			return json;
-		} catch (JsonProcessingException e) {
-			logger.error("System was enable to convert object to String");
-			return null;
+			visitedLocation = gpsUtil.getUserLocation(uuid);
+		} catch (Exception ex) {
+			logger.error("error while retrieving user location");
+			logger.error(ex.getMessage());
 		}
+		logger.info("Data were successfully retrieved");
+		return visitedLocation;
 
 	}
 

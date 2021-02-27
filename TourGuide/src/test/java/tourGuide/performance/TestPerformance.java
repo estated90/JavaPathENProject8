@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import SharedObject.model.Attraction;
+import SharedObject.model.VisitedLocation;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.Attraction;
 import tourGuide.model.User;
-import tourGuide.model.VisitedLocation;
 import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
