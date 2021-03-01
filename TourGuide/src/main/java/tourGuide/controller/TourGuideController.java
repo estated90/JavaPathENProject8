@@ -51,7 +51,7 @@ public class TourGuideController {
 	}
 
 	@GetMapping("/getLocation")
-	public String getLocation(@RequestParam String userName) throws InterruptedException, ExecutionException,
+	public String getLocation(@RequestParam @Valid String userName) throws InterruptedException, ExecutionException,
 			UserNoTFoundException, RewardException, LocalisationException {
 		logger.info("{} is using /getLocation", userName);
 		ObjectMapper mapper = new ObjectMapper();

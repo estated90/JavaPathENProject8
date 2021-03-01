@@ -132,7 +132,7 @@ public class TourGuideService {
 
 	public VisitedLocation trackUserLocation(User user) throws RewardException {
 		logger.info("Tracking location user : {}", user.getUserName());
-		VisitedLocation visitedLocation = gpsUtilFeign.getUserLocation(user.getUserId().toString());
+		VisitedLocation visitedLocation = gpsUtilFeign.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;

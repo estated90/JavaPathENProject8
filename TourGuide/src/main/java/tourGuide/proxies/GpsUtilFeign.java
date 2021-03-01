@@ -1,6 +1,7 @@
 package tourGuide.proxies;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import SharedObject.model.VisitedLocation;
 public interface GpsUtilFeign {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/getUserLocation", produces = "application/json")
-	VisitedLocation getUserLocation(@RequestParam("userId") String userId);
+	VisitedLocation getUserLocation(@RequestParam("userId") UUID uuid);
 
 	@RequestMapping(method = RequestMethod.GET, value = "/getAttractions", produces = "application/json")
 	List<Attraction> getAttractions();

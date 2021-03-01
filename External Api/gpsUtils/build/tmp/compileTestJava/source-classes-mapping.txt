@@ -1,2 +1,0 @@
-src/main/java/gpsUtils/GpsUtilsApplicationTests.java
- src.main.java.gpsUtils.GpsUtilsApplicationTests

@@ -51,9 +51,7 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 	
-	
-    compile(name:'gpsUtil', ext:'jar')
-    compile(name:'RewardCentral', ext:'jar')
+
     compile(name:'TripPricer', ext:'jar')
     compile(name:'sharedObject', ext:'jar')
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
