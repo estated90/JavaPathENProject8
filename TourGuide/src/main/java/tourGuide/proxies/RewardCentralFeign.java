@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
-@FeignClient(value = "microservice-rewardCentral", url = "http://localhost:8082")
+@FeignClient(value = "microservice-rewardCentral", url = "http://localhost:8083/")
 public interface RewardCentralFeign {
 
 	@RequestMapping(value = "/getAttractionRewardPoints", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

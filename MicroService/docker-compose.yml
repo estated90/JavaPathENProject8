@@ -12,9 +12,9 @@ services:
     #     ports: 
     #         - "8082:8080"
     #     container_name: trippricer
-    # rewardcentral:
-    #     build: ./RewardCentral/
-    #     restart: always
-    #     ports: 
-    #         - "8083:8080"
-    #     container_name: rewardcentral
+    rewardcentral:
+        build: ./RewardsService/DockerFile
+        restart: always
+        ports: 
+           - "8083:8083"
+        container_name: rewardCentral

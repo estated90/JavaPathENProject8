@@ -4,7 +4,6 @@ plugins {
 	id 'java'
 }
 
-group = 'src.main.java'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
@@ -21,16 +20,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
-	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
-	compile 'com.jsoniter:jsoniter:0.9.23'  
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind' //, version: '2.12.1'
-	// https://mvnrepository.com/artifact/com.googlecode.jmapper-framework/jmapper-core
-	implementation group: 'com.googlecode.jmapper-framework', name: 'jmapper-core', version: '1.6.1.CR2'
-	
 	
 	compile(name:'sharedObject', ext:'jar')
 	compile(name:'gpsUtil', ext:'jar')

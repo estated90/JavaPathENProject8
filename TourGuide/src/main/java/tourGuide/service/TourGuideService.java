@@ -49,7 +49,7 @@ public class TourGuideService {
 	@Autowired
 	private GpsUtilFeign gpsUtilFeign;
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
-	private final RewardsService rewardsService;
+	private RewardsService rewardsService;
 	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;

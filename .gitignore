@@ -12,8 +12,15 @@ TourGuide/.gitignore
 TourGuide/bin/
 TourGuide/build
 
-External API/gpsUtils/bin/
-External API/gpsUtils/.gradle/
-External API/gpsUtils/.settings/
-External API/gpsUtils/.classpath
-External API/gpsUtils/.project
+MicroService/gpsUtils/bin/
+MicroService/gpsUtils/.gradle/
+MicroService/gpsUtils/.settings/
+MicroService/gpsUtils/.classpath
+MicroService/gpsUtils/.project
+
+
+MicroService/RewardsService/bin/
+MicroService/RewardsService/.gradle/
+MicroService/RewardsService/.settings/
+MicroService/RewardsService/.classpath
+MicroService/RewardsService/.project

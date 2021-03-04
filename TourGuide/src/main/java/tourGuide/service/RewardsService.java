@@ -51,23 +51,23 @@ public class RewardsService {
 			CopyOnWriteArrayList<Attraction> attractions = new CopyOnWriteArrayList<>();
 			userLocations.addAll(user.getVisitedLocations());
 			attractions.addAll(gpsUtilFeign.getAttractions());
-			userLocations.stream().forEach(visitedLocation -> {
-				attractions.stream().forEach(attraction -> {
+			for (VisitedLocation visitedLocation : userLocations) {
+				for (Attraction attraction : attractions) {
 					if (user.getUserRewards().stream()
 							.noneMatch(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
 							&& nearAttraction(visitedLocation, attraction)) {
 						user.addUserReward(
 								new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
 					}
-				});
-			});
+				}
+			}
 		} catch (Exception ex) {
 			logger.error("Error while calculating the reward for {}", user.getUserName());
 			logger.error(ex.getMessage());
 			throw new RewardException("Reward was not calculated for " + user.getUserName(), ex.getMessage());
 		}
 	}
-	
+
 	public void calculateAllRewards(User user, List<Attraction> attractions) throws RewardException {
 		logger.info("Calculating reward for {}", user.getUserName());
 		try {

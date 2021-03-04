@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +51,7 @@ public class TourGuideController {
 		return "Greetings from TourGuide!";
 	}
 
-	@GetMapping("/getLocation")
+	@GetMapping(value = "/getLocation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getLocation(@RequestParam @Valid String userName) throws InterruptedException, ExecutionException,
 			UserNoTFoundException, RewardException, LocalisationException {
 		logger.info("{} is using /getLocation", userName);
@@ -73,7 +74,7 @@ public class TourGuideController {
 		return ResponseEntity.ok("Preferences updated");
 	}
 
-	@GetMapping("/getNearbyAttractions")
+	@GetMapping(value = "/getNearbyAttractions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getNearbyAttractions(@RequestParam String userName) throws InterruptedException, ExecutionException,
 			UserNoTFoundException, RewardException, LocalisationException {
 		logger.info("{} is using /getNearbyAttractions", userName);
@@ -81,26 +82,26 @@ public class TourGuideController {
 		return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocation, utils.getUser(userName)));
 	}
 
-	@GetMapping("/getRewards")
+	@GetMapping(value = "/getRewards", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getRewards(@RequestParam String userName) throws UserNoTFoundException, RewardException {
 		logger.info("{} is using /getRewards", userName);
 		return JsonStream.serialize(tourGuideService.getUserRewards(utils.getUser(userName)));
 	}
 
-	@GetMapping("/getAllCurrentLocations")
+	@GetMapping(value = "/getAllCurrentLocations", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getAllCurrentLocations() throws LocalisationException {
 		logger.info("User is using /getAllCurrentLocations");
 		return JsonStream.serialize(tourGuideService.gettAllCurrentLocation());
 	}
 
-	@GetMapping("/getTripDeals")
+	@GetMapping(value = "/getTripDeals", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getTripDeals(@RequestParam String userName) throws UserNoTFoundException {
 		logger.info("{} is using /getTripDeals", userName);
 		List<Provider> providers = tourGuideService.getTripDeals(utils.getUser(userName));
 		return JsonStream.serialize(providers);
 	}
 
-	@GetMapping("/trackUser")
+	@GetMapping(value = "/trackUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String trackUser(@RequestParam String userName) throws UserNoTFoundException, RewardException {
 		logger.info("{} is using /getTripDeals", userName);
 		ObjectMapper mapper = new ObjectMapper();
@@ -113,7 +114,7 @@ public class TourGuideController {
 		}
 	}
 	
-	@GetMapping("/getAttractions")
+	@GetMapping(value = "/getAttractions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Attraction> getTripDeals() throws UserNoTFoundException {
 		
 		return gpsUtilFeign.getAttractions();
