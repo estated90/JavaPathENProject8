@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import SharedObject.model.Location;
+import SharedObject.model.Provider;
 import SharedObject.model.VisitedLocation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
@@ -39,18 +40,18 @@ import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
 import tourGuide.model.UserReward;
 import tourGuide.proxies.GpsUtilFeign;
+import tourGuide.proxies.TripPriceFeign;
 import tourGuide.tracker.Tracker;
 import tourGuide.utils.Utils;
-import tripPricer.Provider;
-import tripPricer.TripPricer;
 
 @Service
 public class TourGuideService {
 	@Autowired
 	private GpsUtilFeign gpsUtilFeign;
+	@Autowired
+	private TripPriceFeign tripPricer;
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	private RewardsService rewardsService;
-	private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
 
@@ -136,7 +137,7 @@ public class TourGuideService {
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
- 
+
 	}
 
 	public void trackAllUserLocation(List<User> users) {

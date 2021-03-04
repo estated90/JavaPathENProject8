@@ -28,13 +28,13 @@ public class RewardsService {
 	private Logger logger = LoggerFactory.getLogger(RewardsService.class);
 	@Autowired
 	private GpsUtilFeign gpsUtilFeign;
-	@SuppressWarnings("unused")
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
+	@Autowired
+	private RewardCentralFeign rewardCentralFeign;
 	// proximity in miles
 	private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
-	private RewardCentralFeign rewardCentralFeign;
+
 
 	public void setProximityBuffer(int proximityBuffer) {
 		this.proximityBuffer = proximityBuffer;

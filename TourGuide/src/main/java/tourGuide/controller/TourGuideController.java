@@ -1,6 +1,5 @@
 package tourGuide.controller;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
@@ -21,17 +20,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jsoniter.output.JsonStream;
 
-import SharedObject.model.Attraction;
 import SharedObject.model.VisitedLocation;
 import tourGuide.dto.UserNewPreferences;
 import tourGuide.exception.LocalisationException;
 import tourGuide.exception.RewardException;
 import tourGuide.exception.UserNoTFoundException;
 import tourGuide.model.User;
-import tourGuide.proxies.GpsUtilFeign;
 import tourGuide.service.TourGuideService;
 import tourGuide.utils.Utils;
-import tripPricer.Provider;
 
 @RefreshScope
 @RestController
@@ -42,8 +38,6 @@ public class TourGuideController {
 	private TourGuideService tourGuideService;
 	@Autowired
 	private Utils utils;
-	@Autowired
-	private GpsUtilFeign gpsUtilFeign;
 
 	@GetMapping("/")
 	public String index() {
@@ -97,8 +91,14 @@ public class TourGuideController {
 	@GetMapping(value = "/getTripDeals", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getTripDeals(@RequestParam String userName) throws UserNoTFoundException {
 		logger.info("{} is using /getTripDeals", userName);
-		List<Provider> providers = tourGuideService.getTripDeals(utils.getUser(userName));
-		return JsonStream.serialize(providers);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			String json = mapper.writeValueAsString(tourGuideService.getTripDeals(utils.getUser(userName)));
+			return json;
+		} catch (JsonProcessingException e) {
+			logger.error("System was enable to convert object to String");
+			return null;
+		}
 	}
 
 	@GetMapping(value = "/trackUser", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -112,12 +112,6 @@ public class TourGuideController {
 			logger.error("System was enable to convert object to String");
 			return null;
 		}
-	}
-	
-	@GetMapping(value = "/getAttractions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Attraction> getTripDeals() throws UserNoTFoundException {
-		
-		return gpsUtilFeign.getAttractions();
 	}
 
 }

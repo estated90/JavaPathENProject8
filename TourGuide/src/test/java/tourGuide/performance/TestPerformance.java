@@ -28,82 +28,82 @@ import tourGuide.service.TourGuideService;
 @SpringBootTest
 public class TestPerformance {
 
-	@Autowired  
+	@Autowired
 	private GpsUtilFeign gpsUtilFeign;
 	@Autowired
 	private TourGuideService tourGuideService;
 	@Autowired
 	private RewardsService rewardsService;
 	private static Locale locale = new Locale("en", "US");
-	
+
 	@BeforeAll
 	public static void setUp() {
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(100);
 		Locale.setDefault(locale);
 	}
-	
-    //private ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
-    /*
-     * A note on performance improvements:
-     * 
-     * The number of users generated for the high volume tests can be easily
-     * adjusted via this method:
-     * 
-     * InternalTestHelper.setInternalUserNumber(100000);
-     * 
-     * 
-     * These tests can be modified to suit new solutions, just as long as the
-     * performance metrics at the end of the tests remains consistent.
-     * 
-     * These are performance metrics that we are trying to hit:
-     * 
-     * highVolumeTrackLocation: 100,000 users within 15 minutes:
-     * assertTrue(TimeUnit.MINUTES.toSeconds(15) >=
-     * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-     *
-     * highVolumeGetRewards: 100,000 users within 20 minutes:
-     * assertTrue(TimeUnit.MINUTES.toSeconds(20) >=
-     * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-     */
+	// private ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
-    @Test
-    public void highVolumeTrackLocation() throws UserNoTFoundException {
-	List<User> allUsers = new ArrayList<>();
-	allUsers = tourGuideService.getAllUsers();
+	/*
+	 * A note on performance improvements:
+	 * 
+	 * The number of users generated for the high volume tests can be easily
+	 * adjusted via this method:
+	 * 
+	 * InternalTestHelper.setInternalUserNumber(100000);
+	 * 
+	 * 
+	 * These tests can be modified to suit new solutions, just as long as the
+	 * performance metrics at the end of the tests remains consistent.
+	 * 
+	 * These are performance metrics that we are trying to hit:
+	 * 
+	 * highVolumeTrackLocation: 100,000 users within 15 minutes:
+	 * assertTrue(TimeUnit.MINUTES.toSeconds(15) >=
+	 * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
+	 *
+	 * highVolumeGetRewards: 100,000 users within 20 minutes:
+	 * assertTrue(TimeUnit.MINUTES.toSeconds(20) >=
+	 * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
+	 */
 
-	StopWatch stopWatch = new StopWatch();
-	stopWatch.start();
-	tourGuideService.trackAllUserLocation(allUsers);
-	stopWatch.stop();
-	tourGuideService.tracker.stopTracking();
+	@Test
+	public void highVolumeTrackLocation() throws UserNoTFoundException {
+		List<User> allUsers = new ArrayList<>();
+		allUsers = tourGuideService.getAllUsers();
 
-	System.out.println("highVolumeTrackLocation: Time Elapsed: "
-		+ TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
-	assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-    }
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		tourGuideService.trackAllUserLocation(allUsers);
+		stopWatch.stop();
+		tourGuideService.tracker.stopTracking();
 
-    @Test
-    public void highVolumeGetRewards() throws UserNoTFoundException {
-	StopWatch stopWatch = new StopWatch();
-	stopWatch.start();
-
-	Attraction attraction = gpsUtilFeign.getAttractions().get(0);
-	List<User> allUsers = new ArrayList<>();
-	allUsers = tourGuideService.getAllUsers();
-	allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
-
-	rewardsService.calculateAllRewards(allUsers);
-
-	for (User user : allUsers) {
-	    assertTrue(user.getUserRewards().size() > 0);
+		System.out.println("highVolumeTrackLocation: Time Elapsed: "
+				+ TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
-	stopWatch.stop();
-	tourGuideService.tracker.stopTracking();
 
-	System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toMinutes(stopWatch.getTime())
-		+ " seconds.");
-	assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-    }
+	@Test
+	public void highVolumeGetRewards() throws UserNoTFoundException {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+
+		Attraction attraction = gpsUtilFeign.getAttractions().get(0);
+		List<User> allUsers = new ArrayList<>();
+		allUsers = tourGuideService.getAllUsers();
+		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
+
+		rewardsService.calculateAllRewards(allUsers);
+
+		for (User user : allUsers) {
+			assertTrue(user.getUserRewards().size() > 0);
+		}
+		stopWatch.stop();
+		tourGuideService.tracker.stopTracking();
+
+		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toMinutes(stopWatch.getTime())
+				+ " seconds.");
+		assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
+	}
 
 }

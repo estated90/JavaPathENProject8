@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import SharedObject.model.Provider;
 import SharedObject.model.VisitedLocation;
-import tripPricer.Provider;
 
 public class User {
 	private final UUID userId;

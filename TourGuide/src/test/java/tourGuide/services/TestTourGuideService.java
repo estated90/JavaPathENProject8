@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import SharedObject.model.Location;
+import SharedObject.model.Provider;
 import SharedObject.model.VisitedLocation;
 import tourGuide.dto.NearbyAttractions;
 import tourGuide.dto.UserNewPreferences;
@@ -33,7 +34,6 @@ import tourGuide.helper.InternalTestHelper;
 import tourGuide.model.User;
 import tourGuide.model.UserPreferences;
 import tourGuide.service.TourGuideService;
-import tripPricer.Provider;
 
 @DisplayName("Tour guide services Tests")
 @SpringBootTest

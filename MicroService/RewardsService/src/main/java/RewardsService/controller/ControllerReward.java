@@ -21,7 +21,7 @@ public class ControllerReward {
 	private RewardCentral rewardCentral;
 
 	@RequestMapping(value = "/getAttractionRewardPoints", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	private int getAttractionRewardPoints(@RequestParam() UUID attractionId, @RequestParam() UUID userId) {
+	private int getAttractionRewardPoints(@RequestParam UUID attractionId, @RequestParam UUID userId) {
 		int rewards = 0;
 		try {
 			logger.info("calculating reward for attraction : {} and user : {}", attractionId, userId);
