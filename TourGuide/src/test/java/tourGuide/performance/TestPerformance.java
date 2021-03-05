@@ -17,16 +17,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import SharedObject.model.Attraction;
 import SharedObject.model.VisitedLocation;
-import tourGuide.exception.UserNoTFoundException;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.User;
-import tourGuide.proxies.GpsUtilFeign;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
+import tourguide.exception.UserNoTFoundException;
+import tourguide.helper.InternalTestHelper;
+import tourguide.model.User;
+import tourguide.proxies.GpsUtilFeign;
+import tourguide.service.RewardsService;
+import tourguide.service.TourGuideService;
 
 @DisplayName("Overall performance tests")
 @SpringBootTest
-public class TestPerformance {
+class TestPerformance {
 
 	@Autowired
 	private GpsUtilFeign gpsUtilFeign;
@@ -68,7 +68,7 @@ public class TestPerformance {
 	 */
 
 	@Test
-	public void highVolumeTrackLocation() throws UserNoTFoundException {
+	void highVolumeTrackLocation() throws UserNoTFoundException {
 		List<User> allUsers = new ArrayList<>();
 		allUsers = tourGuideService.getAllUsers();
 
@@ -84,7 +84,7 @@ public class TestPerformance {
 	}
 
 	@Test
-	public void highVolumeGetRewards() throws UserNoTFoundException {
+	void highVolumeGetRewards() throws UserNoTFoundException {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 

@@ -17,18 +17,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import SharedObject.model.Attraction;
 import SharedObject.model.VisitedLocation;
-import tourGuide.exception.RewardException;
-import tourGuide.exception.UserNoTFoundException;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.User;
-import tourGuide.model.UserReward;
-import tourGuide.proxies.GpsUtilFeign;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
+import tourguide.exception.RewardException;
+import tourguide.exception.UserNoTFoundException;
+import tourguide.helper.InternalTestHelper;
+import tourguide.model.User;
+import tourguide.model.UserReward;
+import tourguide.proxies.GpsUtilFeign;
+import tourguide.service.RewardsService;
+import tourguide.service.TourGuideService;
 
 @DisplayName("Rewards services Tests")
 @SpringBootTest
-public class TestRewardsService {
+class TestRewardsService {
 
 	private static Locale locale = new Locale("en", "US");
 	@Autowired
@@ -45,7 +45,7 @@ public class TestRewardsService {
 	}
 
 	@Test
-	public void userGetRewards() throws InterruptedException, ExecutionException, RewardException {
+	void userGetRewards() throws InterruptedException, ExecutionException, RewardException {
 		rewardsService.setProximityBuffer(10);
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtilFeign.getAttractions().get(0);
@@ -57,13 +57,13 @@ public class TestRewardsService {
 	}
 
 	@Test
-	public void isWithinAttractionProximity() {
+	void isWithinAttractionProximity() {
 		Attraction attraction = gpsUtilFeign.getAttractions().get(0);
 		assertTrue(rewardsService.isWithinAttractionProximity(attraction, attraction));
 	}
 
 	@Test
-	public void nearAllAttractions() throws UserNoTFoundException, RewardException {
+	void nearAllAttractions() throws UserNoTFoundException, RewardException {
 		rewardsService.setProximityBuffer(Integer.MAX_VALUE);
 
 		rewardsService.calculateRewards(tourGuideService.getAllUsers().get(0));

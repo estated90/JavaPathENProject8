@@ -23,6 +23,7 @@ sonarqube {
     property "sonar.organization", "estated90"
     property "sonar.host.url", "https://sonarcloud.io"
   }
+}
   
 version =  '1.0.0'
 

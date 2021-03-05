@@ -29,11 +29,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import tourGuide.exception.ApiError;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.User;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
+import tourguide.exception.ApiError;
+import tourguide.helper.InternalTestHelper;
+import tourguide.model.User;
+import tourguide.service.RewardsService;
+import tourguide.service.TourGuideService;
 
 /**
  * @author nicol
@@ -42,7 +42,7 @@ import tourGuide.service.TourGuideService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Controller Tests")
-public class TourGuideControllerTest {
+class TourGuideControllerTest {
 
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 	@Autowired
@@ -58,7 +58,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenGetHomePage_thenGreetingMessage() throws Exception {
+	void whenGetHomePage_thenGreetingMessage() throws Exception {
 		MvcResult result = mockMvc
 				.perform(MockMvcRequestBuilders.get("/").header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
@@ -66,7 +66,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenGetLocation_thenReturnLocation() throws Exception {
+	void whenGetLocation_thenReturnLocation() throws Exception {
 		String username = "internalUser0";
 		User user = tourGuideService.getInternalUserMap().get(username);
 		mockMvc.perform(MockMvcRequestBuilders.get("/getLocation").param("userName", username)
@@ -76,7 +76,7 @@ public class TourGuideControllerTest {
 	}
 	
 	@Test
-	public void whenGetLocationAndNoLocation_thenReturnLocation() throws Exception {
+	void whenGetLocationAndNoLocation_thenReturnLocation() throws Exception {
 		String username = "internalUser0";
 		User user = tourGuideService.getInternalUserMap().get(username);
 		mockMvc.perform(MockMvcRequestBuilders.get("/getLocation").param("userName", username)
@@ -86,7 +86,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenPostRequestToPreferencessAndValidPreferences_thenCorrectResponse() throws Exception {
+	void whenPostRequestToPreferencessAndValidPreferences_thenCorrectResponse() throws Exception {
 		String preferences = "{\"attractionProximity\":\"1\",\"lowerPricePoint\":\"100\",\"highPricePoint\":\"1000\",\"tripDuration\":\"1\",\"ticketQuantity\":\"1\",\"numberOfAdults\":\"1\",\"numberOfChildren\":\"0\"}";
 		mockMvc.perform(MockMvcRequestBuilders.post("/postPreferences").param("userName", "internalUser0")
 				.content(preferences).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
@@ -94,7 +94,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenPostRequestToPreferencessAndInialidPreferences_thenWrongResponse() throws Exception {
+	void whenPostRequestToPreferencessAndInialidPreferences_thenWrongResponse() throws Exception {
 		String preferences = "{\"attractionProximity\":\"-1\",\"lowerPricePoint\":\"100000\",\"highPricePoint\":\"1000\",\"tripDuration\":\"0\",\"ticketQuantity\":\"0\",\"numberOfAdults\":\"0\",\"numberOfChildren\":\"-1\"}";
 		mockMvc.perform(MockMvcRequestBuilders.post("/postPreferences").param("userName", ("internalUser0"))
 				.content(preferences).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)).andDo(print())
@@ -112,7 +112,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenGettingNearbyAttractions_thenCorrectResponse() throws Exception {
+	void whenGettingNearbyAttractions_thenCorrectResponse() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/getNearbyAttractions").param("userName", "internalUser0")
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
@@ -128,7 +128,7 @@ public class TourGuideControllerTest {
 	}
 	
 	@Test
-	public void whenGettingRewards_thenCorrectResponse() throws Exception {
+	void whenGettingRewards_thenCorrectResponse() throws Exception {
 		List<User> users = tourGuideService.getAllUsers();
 		rewardService.setProximityBuffer(Integer.MAX_VALUE);
 		rewardService.calculateAllRewards(users);
@@ -140,7 +140,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenGettingAllUsers_thenCorrectResponse() throws Exception {
+	void whenGettingAllUsers_thenCorrectResponse() throws Exception {
 		User user = tourGuideService.getUser("internalUser0");
 		String id = user.getUserId().toString();
 		mockMvc.perform(MockMvcRequestBuilders.get("/getAllCurrentLocations"))
@@ -153,7 +153,7 @@ public class TourGuideControllerTest {
 	}
 	
 	@Test
-	public void whenGettingTripDeals_thenCorrectResponse() throws Exception {
+	void whenGettingTripDeals_thenCorrectResponse() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/getTripDeals").param("userName", "internalUser0"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(jsonPath("$").isArray())
@@ -164,7 +164,7 @@ public class TourGuideControllerTest {
 	}
 	
 	@Test
-	public void whenTrackUser_thenCorrectResponse() throws Exception {
+	void whenTrackUser_thenCorrectResponse() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/trackUser").param("userName", "internalUser0"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(jsonPath("$.userId").isString())
@@ -173,7 +173,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenPostRequestToPreferencessAndInvalidUser_thenThrowErrorResponse() throws Exception {
+	void whenPostRequestToPreferencessAndInvalidUser_thenThrowErrorResponse() throws Exception {
 		String preferences = "{\"attractionProximity\":\"1\",\"lowerPricePoint\":\"100\",\"highPricePoint\":\"1000\",\"tripDuration\":\"1\",\"ticketQuantity\":\"1\",\"numberOfAdults\":\"1\",\"numberOfChildren\":\"0\"}";
 		mockMvc.perform(MockMvcRequestBuilders.post("/postPreferences").param("userName", ("jon")).content(preferences)
 				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)).andDo(print())
@@ -182,7 +182,7 @@ public class TourGuideControllerTest {
 	}
 
 	@Test
-	public void whenGetRequestToPreferencessAndValidPreferences_thenErrorResponse() throws Exception {
+	void whenGetRequestToPreferencessAndValidPreferences_thenErrorResponse() throws Exception {
 		String preferences = "{\"attractionProximity\":\"1\",\"lowerPricePoint\":\"100\",\"highPricePoint\":\"1000\",\"tripDuration\":\"1\",\"ticketQuantity\":\"1\",\"numberOfAdults\":\"1\",\"numberOfChildren\":\"0\"}";
 		mockMvc.perform(MockMvcRequestBuilders.get("/postPreferences").param("userName", ("internalUser0"))
 				.content(preferences).header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))

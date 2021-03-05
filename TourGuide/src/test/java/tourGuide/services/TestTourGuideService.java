@@ -25,19 +25,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import SharedObject.model.Location;
 import SharedObject.model.Provider;
 import SharedObject.model.VisitedLocation;
-import tourGuide.dto.NearbyAttractions;
-import tourGuide.dto.UserNewPreferences;
-import tourGuide.exception.LocalisationException;
-import tourGuide.exception.RewardException;
-import tourGuide.exception.UserNoTFoundException;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.model.User;
-import tourGuide.model.UserPreferences;
-import tourGuide.service.TourGuideService;
+import tourguide.dto.NearbyAttractions;
+import tourguide.dto.UserNewPreferences;
+import tourguide.exception.LocalisationException;
+import tourguide.exception.RewardException;
+import tourguide.exception.UserNoTFoundException;
+import tourguide.helper.InternalTestHelper;
+import tourguide.model.User;
+import tourguide.model.UserPreferences;
+import tourguide.service.TourGuideService;
 
 @DisplayName("Tour guide services Tests")
 @SpringBootTest
-public class TestTourGuideService {
+class TestTourGuideService {
 
 	private static Locale locale = new Locale("en", "US");
 	@Autowired
@@ -60,20 +60,20 @@ public class TestTourGuideService {
 	}
 	
 	@AfterEach
-	public void cleanUp() {
+	void cleanUp() {
 		tourGuideService.getInternalUserMap().remove(user.getUserName());
 		tourGuideService.getInternalUserMap().remove(user2.getUserName());
 	}
 
 	@Test
-	public void getUserLocation() throws InterruptedException, ExecutionException, RewardException {
+	void getUserLocation() throws InterruptedException, ExecutionException, RewardException {
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		tourGuideService.tracker.stopTracking();
 		assertEquals(user.getUserId(), visitedLocation.getUserId());
 	}
 
 	@Test
-	public void addUser() throws UserNoTFoundException {
+	void addUser() throws UserNoTFoundException {
 		User user3 = new User(UUID.randomUUID(), "jon3", "000", "jon2@tourGuide.com");
 		tourGuideService.addUser(user3);
 		
@@ -91,7 +91,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void getAllUsers() throws UserNoTFoundException {
+	void getAllUsers() throws UserNoTFoundException {
 		List<User> allUsers = tourGuideService.getAllUsers();
 
 		tourGuideService.tracker.stopTracking();
@@ -101,7 +101,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void trackUser() throws InterruptedException, ExecutionException, RewardException {
+	void trackUser() throws InterruptedException, ExecutionException, RewardException {
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
 		tourGuideService.tracker.stopTracking();
@@ -110,7 +110,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void getNearbyAttractions() throws InterruptedException, ExecutionException, RewardException {
+	void getNearbyAttractions() throws InterruptedException, ExecutionException, RewardException {
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
 		List<NearbyAttractions> attractions = tourGuideService.getNearByAttractions(visitedLocation, user);
@@ -121,7 +121,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void getTripDeals() {
+	void getTripDeals() {
 		List<Provider> providers = tourGuideService.getTripDeals(user);
 
 		tourGuideService.tracker.stopTracking();
@@ -130,7 +130,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void updatePreferences() throws UserNoTFoundException {
+	void updatePreferences() throws UserNoTFoundException {
 		List<User> allUsers = tourGuideService.getAllUsers();
 		user = allUsers.get(0);
 		UserPreferences userPreferences = user.getUserPreferences();
@@ -167,7 +167,7 @@ public class TestTourGuideService {
 	}
 
 	@Test
-	public void getAllUsersCurrentLocation() throws InterruptedException, ExecutionException, LocalisationException,
+	void getAllUsersCurrentLocation() throws InterruptedException, ExecutionException, LocalisationException,
 			UserNoTFoundException, RewardException {
 
 		for (int i = 0; i < 3; i++) {
