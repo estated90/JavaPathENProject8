@@ -24,3 +24,9 @@ MicroService/RewardsService/.gradle/
 MicroService/RewardsService/.settings/
 MicroService/RewardsService/.classpath
 MicroService/RewardsService/.project
+
+MicroService/TripPricer/bin/
+MicroService/TripPricer/.gradle/
+MicroService/TripPricer/.settings/
+MicroService/TripPricer/.classpath
+MicroService/TripPricer/.project

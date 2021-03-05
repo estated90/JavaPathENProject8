@@ -38,7 +38,7 @@ public class TourGuideController {
 	private TourGuideService tourGuideService;
 	@Autowired
 	private Utils utils;
-
+	
 	@GetMapping("/")
 	public String index() {
 		logger.info("Redirecting to greeting message");
@@ -113,5 +113,4 @@ public class TourGuideController {
 			return null;
 		}
 	}
-
 }

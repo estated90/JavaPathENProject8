@@ -14,8 +14,16 @@ plugins {
 	id 'org.springframework.boot' version '2.4.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id "jacoco"
+	id "org.sonarqube" version "3.1.1"
 }
 
+sonarqube {
+  properties {
+    property "sonar.projectKey", "estated90_JavaPathENProject8"
+    property "sonar.organization", "estated90"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+  
 version =  '1.0.0'
 
 repositories {
