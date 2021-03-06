@@ -12,10 +12,6 @@ public class FieldsValueMatchValidator implements ConstraintValidator<FieldMatch
 
 	private Logger logger = LoggerFactory.getLogger(FieldsValueMatchValidator.class);
 
-	public void initialize(FieldMatch constraintAnnotation) {
-		
-	}
-
 	@Override
 	public boolean isValid(UserNewPreferences userNewPreferences, final ConstraintValidatorContext context) {
 		try {

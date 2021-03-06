@@ -75,7 +75,7 @@ public class TourGuideService {
 		}
 	}
 
-	public VisitedLocation getUserLocation(User user) throws RewardException, LocalisationException {
+	public VisitedLocation getUserLocation(User user) throws LocalisationException {
 		logger.info("Retrieving user location for user : {}", user.getUserName());
 		try {
 			return (user.getVisitedLocations().isEmpty()) ? user.getLastVisitedLocation() : trackUserLocation(user);
@@ -120,14 +120,14 @@ public class TourGuideService {
 
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(UserReward::getRewardPoints).sum();
-		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(),
+		List<Provider> providers = tripPricer.getPrice(TRIPPRICERAPIKEY, user.getUserId(),
 				user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
 				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		user.setTripDeals(providers);
 		return providers;
 	}
 
-	public VisitedLocation trackUserLocation(User user) throws RewardException {
+	public VisitedLocation trackUserLocation(User user) {
 		logger.info("Tracking location user : {}", user.getUserName());
 		VisitedLocation visitedLocation = gpsUtilFeign.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
@@ -143,13 +143,7 @@ public class TourGuideService {
 		for (User user : users) {
 			Runnable runnableTask = () -> {
 				Locale.setDefault(new Locale("en", "US"));
-				try {
-					trackUserLocation(user);
-				} catch (RewardException ex) {
-					logger.error("Error while calcuilating the reward for {} and error {}", user.getUserName(),
-							ex.getMessage());
-					ex.printStackTrace();
-				}
+				trackUserLocation(user);
 			};
 			executorService.execute(runnableTask);
 		}
@@ -178,6 +172,7 @@ public class TourGuideService {
 
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
 			public void run() {
 				tracker.stopTracking();
 			}
@@ -205,14 +200,7 @@ public class TourGuideService {
 			Map<String, Location> allUsersLocation = new HashMap<>();
 			List<User> users = getAllUsers();
 			for (User user : users) {
-				List<VisitedLocation> visitedLocation = user.getVisitedLocations();
-				Comparator<VisitedLocation> byDate = new Comparator<VisitedLocation>() {
-					public int compare(VisitedLocation c1, VisitedLocation c2) {
-						return Long.valueOf(c1.getTimeVisited().getTime()).compareTo(c2.getTimeVisited().getTime());
-					}
-				};
-				Collections.sort(visitedLocation, byDate.reversed());
-				allUsersLocation.put(user.getUserId().toString(), visitedLocation.get(0).getLocation());
+				allUsersLocation.put(user.getUserId().toString(), user.getLastVisitedLocation().getLocation());
 			}
 			logger.info("All the user localisation have been retrieved : {}", allUsersLocation);
 			return allUsersLocation;
@@ -227,7 +215,7 @@ public class TourGuideService {
 	 * Methods Below: For Internal Testing
 	 * 
 	 **********************************************************************************/
-	private static final String tripPricerApiKey = "test-server-api-key";
+	private static final String TRIPPRICERAPIKEY = "test-server-api-key";
 	// Database connection will be used for external users, but for testing purposes
 	// internal users are provided and stored in memory
 	private final Map<String, User> internalUserMap = new HashMap<>();
@@ -250,7 +238,7 @@ public class TourGuideService {
 
 			internalUserMap.put(userName, user);
 		});
-		logger.debug("Created " + InternalTestHelper.getInternalUserNumber() + " internal test users.");
+		logger.debug("Created {} internal test users.", InternalTestHelper.getInternalUserNumber());
 	}
 
 	private void generateUserLocationHistory(User user) {

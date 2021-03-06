@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import SharedObject.model.Attraction;
 import SharedObject.model.Location;
 import SharedObject.model.VisitedLocation;
-import tourguide.exception.RewardException;
 import tourguide.model.User;
 import tourguide.model.UserReward;
 import tourguide.proxies.GpsUtilFeign;
@@ -44,33 +43,26 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
-	public void calculateRewards(User user) throws RewardException {
+	public void calculateRewards(User user) {
 		logger.info("Calculating reward for {}", user.getUserName());
-		try {
-			CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
-			CopyOnWriteArrayList<Attraction> attractions = new CopyOnWriteArrayList<>();
-			userLocations.addAll(user.getVisitedLocations());
-			attractions.addAll(gpsUtilFeign.getAttractions());
-			for (VisitedLocation visitedLocation : userLocations) {
-				for (Attraction attraction : attractions) {
-					if (user.getUserRewards().stream()
-							.noneMatch(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
-							&& nearAttraction(visitedLocation, attraction)) {
-						user.addUserReward(
-								new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-					}
+		CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
+		CopyOnWriteArrayList<Attraction> attractions = new CopyOnWriteArrayList<>();
+		userLocations.addAll(user.getVisitedLocations());
+		attractions.addAll(gpsUtilFeign.getAttractions());
+		for (VisitedLocation visitedLocation : userLocations) {
+			for (Attraction attraction : attractions) {
+				if (user.getUserRewards().stream()
+						.noneMatch(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
+						&& nearAttraction(visitedLocation, attraction)) {
+					user.addUserReward(
+							new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
 				}
 			}
-		} catch (Exception ex) {
-			logger.error("Error while calculating the reward for {}", user.getUserName());
-			logger.error(ex.getMessage());
-			throw new RewardException("Reward was not calculated for " + user.getUserName(), ex.getMessage());
 		}
 	}
 
-	public void calculateAllRewards(User user, List<Attraction> attractions) throws RewardException {
+	public void calculateAllRewards(User user, List<Attraction> attractions) {
 		logger.info("Calculating reward for {}", user.getUserName());
-		try {
 			CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
 			userLocations.addAll(user.getVisitedLocations());
 			userLocations.stream().forEach(visitedLocation -> 
@@ -83,11 +75,6 @@ public class RewardsService {
 					}
 				})
 			);
-		} catch (Exception ex) {
-			logger.error("Error while calculating the reward for {}", user.getUserName());
-			logger.error(ex.getMessage());
-			throw new RewardException("Reward was not calculated for " + user.getUserName(), ex.getMessage());
-		}
 	}
 
 	public void calculateAllRewards(List<User> users) {
@@ -98,11 +85,7 @@ public class RewardsService {
 		for (User user : users) {
 			Runnable runnableTask = () -> {
 				Locale.setDefault(new Locale("en", "US"));
-				try {
-					calculateAllRewards(user, attractions);
-				} catch (RewardException ex) {
-					logger.error("Error while calcuilating the reward for {}", user.getUserName());
-				}
+				calculateAllRewards(user, attractions);
 			};
 			executorService.execute(runnableTask);
 		}

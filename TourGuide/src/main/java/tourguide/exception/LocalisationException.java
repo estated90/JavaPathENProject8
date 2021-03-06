@@ -6,19 +6,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class LocalisationException extends Exception {
 
-    private final String message;
-    
-    private static final long serialVersionUID = 1L;
+	private final String message;
 
-    public LocalisationException(String message) {
-	this.message=message;
-    }
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
-   
+	public LocalisationException(String message) {
+		this.message = message;
+	}
+
+	/**
+	 * @return the message
+	 */
+	@Override
+	public String getMessage() {
+		return message;
+	}
+
 }

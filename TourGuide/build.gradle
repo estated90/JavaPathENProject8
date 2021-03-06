@@ -22,6 +22,7 @@ sonarqube {
     property "sonar.projectKey", "estated90_JavaPathENProject8"
     property "sonar.organization", "estated90"
     property "sonar.host.url", "https://sonarcloud.io"
+     property 'sonar.login', 'fd81ee84e765961be3ec76f546ef0aba724937f2'
   }
 }
   

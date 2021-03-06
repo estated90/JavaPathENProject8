@@ -1,7 +1,6 @@
 package tourGuide.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -44,13 +43,13 @@ class TestTourGuideService {
 	private TourGuideService tourGuideService;
 	private User user;
 	private User user2;
-	
+
 	@BeforeAll
 	public static void setUp() {
 		InternalTestHelper.setInternalUserNumber(0);
 		Locale.setDefault(locale);
 	}
-	
+
 	@BeforeEach
 	public void setUpBeforeEach() {
 		user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
@@ -58,7 +57,7 @@ class TestTourGuideService {
 		tourGuideService.addUser(user);
 		tourGuideService.addUser(user2);
 	}
-	
+
 	@AfterEach
 	void cleanUp() {
 		tourGuideService.getInternalUserMap().remove(user.getUserName());
@@ -76,7 +75,7 @@ class TestTourGuideService {
 	void addUser() throws UserNoTFoundException {
 		User user3 = new User(UUID.randomUUID(), "jon3", "000", "jon2@tourGuide.com");
 		tourGuideService.addUser(user3);
-		
+
 		User retrivedUser = tourGuideService.getUser(user.getUserName());
 		User retrivedUser2 = tourGuideService.getUser(user2.getUserName());
 		User retrivedUser3 = tourGuideService.getUser(user3.getUserName());
@@ -86,7 +85,7 @@ class TestTourGuideService {
 		assertEquals(user, retrivedUser);
 		assertEquals(user2, retrivedUser2);
 		assertEquals(user3, retrivedUser3);
-		
+
 		tourGuideService.getInternalUserMap().remove(user3.getUserName());
 	}
 
@@ -181,9 +180,10 @@ class TestTourGuideService {
 
 		assertEquals(3, allUsers.size());
 		assertTrue(allUsers.containsKey(user.getUserId().toString()));
-		assertNotNull(allUsers.get(user2.getUserId().toString()).getLongitude());
-		assertNotNull(allUsers.get(user2.getUserId().toString()).getLatitude());
-
+		assertEquals(tourGuideService.getInternalUserMap().get(user2.getUserName()).getLastVisitedLocation()
+				.getLocation().getLongitude(), allUsers.get(user2.getUserId().toString()).getLongitude());
+		assertEquals(tourGuideService.getInternalUserMap().get(user2.getUserName()).getLastVisitedLocation()
+				.getLocation().getLatitude(), allUsers.get(user2.getUserId().toString()).getLatitude());
 	}
 
 }

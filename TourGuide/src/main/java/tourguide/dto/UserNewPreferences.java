@@ -23,9 +23,6 @@ public class UserNewPreferences {
 	@Min(value = 0, message = "Children cannot be negative")
 	private int numberOfChildren = 0;
 
-	public UserNewPreferences() {
-	}
-
 	/**
 	 * @return the attractionProximity
 	 */

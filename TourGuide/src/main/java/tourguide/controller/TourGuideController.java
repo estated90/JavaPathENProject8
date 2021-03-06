@@ -36,6 +36,8 @@ public class TourGuideController {
 	private TourGuideService tourGuideService;
 	@Autowired
 	private Utils utils;
+	
+	private static final String ENABLECONVERT = "System was enable to convert object to String";
 
 	@GetMapping("/")
 	public String index() {
@@ -45,14 +47,14 @@ public class TourGuideController {
 
 	@GetMapping(value = "/getLocation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getLocation(@RequestParam @Valid String userName)
-			throws UserNoTFoundException, RewardException, LocalisationException {
+			throws UserNoTFoundException, LocalisationException {
 		userName = correctPatern(userName);
 		logger.info("{} is using /getLocation", userName);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			return mapper.writeValueAsString(tourGuideService.getUserLocation(utils.getUser(userName)));
 		} catch (JsonProcessingException e) {
-			logger.error("System was enable to convert object to String");
+			logger.error(ENABLECONVERT);
 			return null;
 		}
 	}
@@ -69,7 +71,7 @@ public class TourGuideController {
 
 	@GetMapping(value = "/getNearbyAttractions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getNearbyAttractions(@RequestParam String userName)
-			throws UserNoTFoundException, RewardException, LocalisationException {
+			throws UserNoTFoundException, LocalisationException {
 		userName = correctPatern(userName);
 		logger.info("{} is using /getNearbyAttractions", userName);
 		VisitedLocation visitedLocation = tourGuideService.getUserLocation(utils.getUser(userName));
@@ -97,25 +99,25 @@ public class TourGuideController {
 		try {
 			return mapper.writeValueAsString(tourGuideService.getTripDeals(utils.getUser(userName)));
 		} catch (JsonProcessingException e) {
-			logger.error("System was enable to convert object to String");
+			logger.error(ENABLECONVERT);
 			return null;
 		}
 	}
 
 	@GetMapping(value = "/trackUser", produces = MediaType.APPLICATION_JSON_VALUE)
-	public String trackUser(@RequestParam String userName) throws UserNoTFoundException, RewardException {
+	public String trackUser(@RequestParam String userName) throws UserNoTFoundException {
 		userName = correctPatern(userName);
 		logger.info("{} is using /getTripDeals", userName);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			return mapper.writeValueAsString(tourGuideService.trackUserLocation(utils.getUser(userName)));
 		} catch (JsonProcessingException e) {
-			logger.error("System was enable to convert object to String");
+			logger.error(ENABLECONVERT);
 			return null;
 		}
 	}
 
 	private String correctPatern(String param1) {
-		return param1.replaceAll("[\n|\r|\t]", "_");
+		return param1.replaceAll("[\n\r|\t]", "_");
 	}
 }

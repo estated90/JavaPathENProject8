@@ -1,6 +1,8 @@
 package tourguide.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -90,7 +92,14 @@ public class User {
 	}
 
 	public VisitedLocation getLastVisitedLocation() {
-		return visitedLocations.get(visitedLocations.size() - 1);
+		List<VisitedLocation> visitedLocation = getVisitedLocations();
+		Comparator<VisitedLocation> byDate = new Comparator<VisitedLocation>() {
+			public int compare(VisitedLocation c1, VisitedLocation c2) {
+				return Long.valueOf(c1.getTimeVisited().getTime()).compareTo(c2.getTimeVisited().getTime());
+			}
+		};
+		Collections.sort(visitedLocation, byDate.reversed());
+		return visitedLocations.get(0);
 	}
 
 	public void setTripDeals(List<Provider> tripDeals) {

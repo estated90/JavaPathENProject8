@@ -9,14 +9,12 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tourguide.exception.RewardException;
-import tourguide.exception.UserNoTFoundException;
 import tourguide.model.User;
 import tourguide.service.TourGuideService;
 
 public class Tracker extends Thread {
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
-	private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(5);
+	private static final long TRACKINGPOLLINGINTERVAL = TimeUnit.MINUTES.toSeconds(5);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final TourGuideService tourGuideService;
 	private boolean stop = false;
@@ -43,30 +41,24 @@ public class Tracker extends Thread {
 				logger.debug("Tracker stopping");
 				break;
 			}
-
-			List<User> users = null;
 			try {
-				users = tourGuideService.getAllUsers();
-			} catch (UserNoTFoundException e1) {
-				logger.error("Unable to recover all users for the tracker : {}", e1);
+				List<User> users = tourGuideService.getAllUsers();
+				logger.debug("Begin Tracker. Tracking {} users.", users.size());
+				stopWatch.start();
+				users.forEach(u -> tourGuideService.trackUserLocation(u));
+			} catch (NullPointerException ex) {
+				logger.info("No user to track");
+				throw new NullPointerException("No user to track");
 			}
-			logger.debug("Begin Tracker. Tracking " + users.size() + " users.");
-			stopWatch.start();
-			users.forEach(u -> {
-				try {
-					tourGuideService.trackUserLocation(u);
-				} catch (RewardException e1) {
-					e1.printStackTrace();
-				}
-			});
 			stopWatch.stop();
-			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+			logger.debug("Tracker Time Elapsed: {} seconds.", TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 			stopWatch.reset();
 			try {
 				logger.debug("Tracker sleeping");
-				TimeUnit.SECONDS.sleep(trackingPollingInterval);
+				TimeUnit.SECONDS.sleep(TRACKINGPOLLINGINTERVAL);
 			} catch (InterruptedException e) {
 				logger.error("Tracker was not shut correctly : {}", e.getMessage());
+				Thread.currentThread().interrupt();
 			}
 		}
 

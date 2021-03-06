@@ -81,9 +81,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 	public ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex,
 			final WebRequest request) {
 		logger.info(ex.getClass().getName());
-		//
 		final String error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
-
 		final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
 		return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
@@ -95,8 +93,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 		//
 		final List<String> errors = new ArrayList<>();
 		for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-			errors.add(violation.getRootBeanClass().getName() + ": "
-					+ violation.getMessage());
+			errors.add(violation.getRootBeanClass().getName() + ": " + violation.getMessage());
 		}
 
 		final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
@@ -145,5 +142,5 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 				"error occurred");
 		return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
-	
+
 }
