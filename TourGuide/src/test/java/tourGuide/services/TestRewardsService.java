@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import SharedObject.model.Attraction;
 import SharedObject.model.VisitedLocation;
+import tourguide.exception.LocalisationException;
 import tourguide.exception.RewardException;
 import tourguide.exception.UserNoTFoundException;
 import tourguide.helper.InternalTestHelper;
@@ -45,7 +46,7 @@ class TestRewardsService {
 	}
 
 	@Test
-	void userGetRewards() throws InterruptedException, ExecutionException, RewardException {
+	void userGetRewards() throws InterruptedException, ExecutionException, RewardException, LocalisationException {
 		rewardsService.setProximityBuffer(10);
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
 		Attraction attraction = gpsUtilFeign.getAttractions().get(0);

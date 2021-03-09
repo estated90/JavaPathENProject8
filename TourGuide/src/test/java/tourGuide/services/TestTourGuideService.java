@@ -27,6 +27,7 @@ import SharedObject.model.VisitedLocation;
 import tourguide.dto.NearbyAttractions;
 import tourguide.dto.UserNewPreferences;
 import tourguide.exception.LocalisationException;
+import tourguide.exception.ProviderNoTFoundException;
 import tourguide.exception.RewardException;
 import tourguide.exception.UserNoTFoundException;
 import tourguide.helper.InternalTestHelper;
@@ -65,7 +66,7 @@ class TestTourGuideService {
 	}
 
 	@Test
-	void getUserLocation() throws InterruptedException, ExecutionException, RewardException {
+	void getUserLocation() throws InterruptedException, ExecutionException, RewardException, LocalisationException {
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 		tourGuideService.tracker.stopTracking();
 		assertEquals(user.getUserId(), visitedLocation.getUserId());
@@ -100,7 +101,7 @@ class TestTourGuideService {
 	}
 
 	@Test
-	void trackUser() throws InterruptedException, ExecutionException, RewardException {
+	void trackUser() throws InterruptedException, ExecutionException, RewardException, LocalisationException {
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
 		tourGuideService.tracker.stopTracking();
@@ -109,7 +110,7 @@ class TestTourGuideService {
 	}
 
 	@Test
-	void getNearbyAttractions() throws InterruptedException, ExecutionException, RewardException {
+	void getNearbyAttractions() throws InterruptedException, ExecutionException, RewardException, LocalisationException {
 		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
 
 		List<NearbyAttractions> attractions = tourGuideService.getNearByAttractions(visitedLocation, user);
@@ -120,7 +121,7 @@ class TestTourGuideService {
 	}
 
 	@Test
-	void getTripDeals() {
+	void getTripDeals() throws ProviderNoTFoundException {
 		List<Provider> providers = tourGuideService.getTripDeals(user);
 
 		tourGuideService.tracker.stopTracking();
@@ -129,7 +130,7 @@ class TestTourGuideService {
 	}
 
 	@Test
-	void updatePreferences() throws UserNoTFoundException {
+	void updatePreferences() throws UserNoTFoundException, ProviderNoTFoundException {
 		List<User> allUsers = tourGuideService.getAllUsers();
 		user = allUsers.get(0);
 		UserPreferences userPreferences = user.getUserPreferences();

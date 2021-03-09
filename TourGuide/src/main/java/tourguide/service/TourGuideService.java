@@ -32,6 +32,7 @@ import SharedObject.model.VisitedLocation;
 import tourguide.dto.NearbyAttractions;
 import tourguide.dto.UserNewPreferences;
 import tourguide.exception.LocalisationException;
+import tourguide.exception.ProviderNoTFoundException;
 import tourguide.exception.RewardException;
 import tourguide.exception.UserNoTFoundException;
 import tourguide.helper.InternalTestHelper;
@@ -118,22 +119,33 @@ public class TourGuideService {
 		}
 	}
 
-	public List<Provider> getTripDeals(User user) {
+	public List<Provider> getTripDeals(User user) throws ProviderNoTFoundException {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(UserReward::getRewardPoints).sum();
-		List<Provider> providers = tripPricer.getPrice(TRIPPRICERAPIKEY, user.getUserId(),
+		if (tripPricer.getPrice(TRIPPRICERAPIKEY, user.getUserId(),
 				user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
-				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
-		user.setTripDeals(providers);
-		return providers;
+				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints)!=null) {
+			List<Provider> providers = tripPricer.getPrice(TRIPPRICERAPIKEY, user.getUserId(),
+					user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
+					user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
+					user.setTripDeals(providers);
+					return providers;
+		} else {
+			logger.error("No provider have been found for user: {}", user.getUserName());
+			throw new ProviderNoTFoundException("No provider have been found");
+		}
 	}
 
-	public VisitedLocation trackUserLocation(User user) {
+	public VisitedLocation trackUserLocation(User user) throws LocalisationException {
 		logger.info("Tracking location user : {}", user.getUserName());
 		VisitedLocation visitedLocation = gpsUtilFeign.getUserLocation(user.getUserId());
-		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
-		return visitedLocation;
-
+		if (visitedLocation!=null) {
+			user.addToVisitedLocations(visitedLocation);
+			rewardsService.calculateRewards(user);
+			return visitedLocation;
+		}else {
+			logger.error("No localization have been found for user: {}:", user.getUserName());
+			throw new LocalisationException("No localisation have been found");
+		}
 	}
 
 	public void trackAllUserLocation(List<User> users) {
@@ -143,7 +155,12 @@ public class TourGuideService {
 		for (User user : users) {
 			Runnable runnableTask = () -> {
 				Locale.setDefault(new Locale("en", "US"));
-				trackUserLocation(user);
+				try {
+					trackUserLocation(user);
+				} catch (LocalisationException e) {
+					logger.error("No localization have been found while tracking all users");
+					logger.error(e.getMessage());
+				}
 			};
 			executorService.execute(runnableTask);
 		}

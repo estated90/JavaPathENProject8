@@ -21,6 +21,7 @@ import com.jsoniter.output.JsonStream;
 import SharedObject.model.VisitedLocation;
 import tourguide.dto.UserNewPreferences;
 import tourguide.exception.LocalisationException;
+import tourguide.exception.ProviderNoTFoundException;
 import tourguide.exception.RewardException;
 import tourguide.exception.UserNoTFoundException;
 import tourguide.model.User;
@@ -92,7 +93,7 @@ public class TourGuideController {
 	}
 
 	@GetMapping(value = "/getTripDeals", produces = MediaType.APPLICATION_JSON_VALUE)
-	public String getTripDeals(@RequestParam String userName) throws UserNoTFoundException {
+	public String getTripDeals(@RequestParam String userName) throws UserNoTFoundException, ProviderNoTFoundException {
 		userName = correctPatern(userName);
 		logger.info("{} is using /getTripDeals", userName);
 		ObjectMapper mapper = new ObjectMapper();
@@ -105,7 +106,7 @@ public class TourGuideController {
 	}
 
 	@GetMapping(value = "/trackUser", produces = MediaType.APPLICATION_JSON_VALUE)
-	public String trackUser(@RequestParam String userName) throws UserNoTFoundException {
+	public String trackUser(@RequestParam String userName) throws UserNoTFoundException, LocalisationException {
 		userName = correctPatern(userName);
 		logger.info("{} is using /getTripDeals", userName);
 		ObjectMapper mapper = new ObjectMapper();

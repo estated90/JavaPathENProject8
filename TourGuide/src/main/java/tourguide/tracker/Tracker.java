@@ -9,6 +9,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tourguide.exception.LocalisationException;
 import tourguide.model.User;
 import tourguide.service.TourGuideService;
 
@@ -45,7 +46,14 @@ public class Tracker extends Thread {
 				List<User> users = tourGuideService.getAllUsers();
 				logger.debug("Begin Tracker. Tracking {} users.", users.size());
 				stopWatch.start();
-				users.forEach(u -> tourGuideService.trackUserLocation(u));
+				users.forEach(u -> {
+					try {
+						tourGuideService.trackUserLocation(u);
+					} catch (LocalisationException e) {
+						logger.error("localisation not found");
+						logger.error(e.getMessage());
+					}
+				});
 			} catch (NullPointerException ex) {
 				logger.info("No user to track");
 				throw new NullPointerException("No user to track");
