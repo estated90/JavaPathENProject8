@@ -11,10 +11,12 @@ TourGuide/.project
 TourGuide/.gitignore
 TourGuide/bin/
 TourGuide/build
+TourGuide/doc/
 
 MicroService/gpsUtils/bin/
 MicroService/gpsUtils/.gradle/
 MicroService/gpsUtils/.settings/
+MicroService/gpsUtils/build/
 MicroService/gpsUtils/.classpath
 MicroService/gpsUtils/.project
 
@@ -24,9 +26,13 @@ MicroService/RewardsService/.gradle/
 MicroService/RewardsService/.settings/
 MicroService/RewardsService/.classpath
 MicroService/RewardsService/.project
+MicroService/RewardsService/build/
+MicroService/RewardsService/HELP.md
 
 MicroService/TripPricer/bin/
 MicroService/TripPricer/.gradle/
 MicroService/TripPricer/.settings/
 MicroService/TripPricer/.classpath
 MicroService/TripPricer/.project
+MicroService/TripPricer/build/
+MicroService/TripPricer/HELP.md

@@ -6,9 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * @author Nicolas
+ * <p>Exception handler for custom exception</p>
+ *
+ */
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    /**
+     * @param ex Error raised
+     * @return the JSON answer
+     */
     @ExceptionHandler(UserNoTFoundException.class)
     public ResponseEntity<Object> handleApiException(
 	    UserNoTFoundException ex) {
@@ -16,6 +25,10 @@ public class ApiExceptionHandler {
     	return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     
+    /**
+     * @param ex Error raised
+     * @return the JSON answer
+     */
     @ExceptionHandler(RewardException.class)
     public ResponseEntity<Object> handleApiRewardException(
 	    RewardException ex) {
@@ -23,6 +36,10 @@ public class ApiExceptionHandler {
     	return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     
+    /**
+     * @param ex Error raised
+     * @return the JSON answer
+     */
     @ExceptionHandler(LocalisationException.class)
     public ResponseEntity<Object> handleApiLocalisationException(
 	    RewardException ex) {

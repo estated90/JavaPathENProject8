@@ -67,8 +67,9 @@ dependencies {
     compile(name:'sharedObject', ext:'jar')
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind' //, version: '2.12.1'
-    
-    
+	// https://mvnrepository.com/artifact/io.projectreactor/reactor-core
+	implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.3'
+	    
 }
 
 dependencyManagement {

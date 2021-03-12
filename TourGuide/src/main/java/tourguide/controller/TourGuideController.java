@@ -28,6 +28,10 @@ import tourguide.model.User;
 import tourguide.service.TourGuideService;
 import tourguide.utils.Utils;
 
+/**
+ * @author Nicolas
+ *
+ */
 @RefreshScope
 @RestController
 public class TourGuideController {
@@ -40,12 +44,21 @@ public class TourGuideController {
 	
 	private static final String ENABLECONVERT = "System was enable to convert object to String";
 
+	/**
+	 * @return string
+	 */
 	@GetMapping("/")
 	public String index() {
 		logger.info("Redirecting to greeting message");
 		return "Greetings from TourGuide!";
 	}
 
+	/**
+	 * @param userName provide user name of user
+	 * @return the location as JSON
+	 * @throws UserNoTFoundException when user do not exist
+	 * @throws LocalisationException when location was not retrieved
+	 */
 	@GetMapping(value = "/getLocation", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getLocation(@RequestParam @Valid String userName)
 			throws UserNoTFoundException, LocalisationException {
@@ -60,6 +73,12 @@ public class TourGuideController {
 		}
 	}
 
+	/**
+	 * @param userName of user
+	 * @param userPreferences object
+	 * @return an OK HTML
+	 * @throws UserNoTFoundException when user do not exist
+	 */
 	@PostMapping(value = "/postPreferences", params = "userName")
 	public ResponseEntity<String> postPreferences(@RequestParam String userName,
 			@Valid @RequestBody UserNewPreferences userPreferences) throws UserNoTFoundException {
@@ -70,6 +89,12 @@ public class TourGuideController {
 		return ResponseEntity.ok("Preferences updated");
 	}
 
+	/**
+	 * @param userName provide user name of user
+	 * @return a list of 5 attraction and their localization as JSON
+	 * @throws UserNoTFoundException when user do not exist
+	 * @throws LocalisationException when location was not retrieved
+	 */
 	@GetMapping(value = "/getNearbyAttractions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getNearbyAttractions(@RequestParam String userName)
 			throws UserNoTFoundException, LocalisationException {
@@ -79,6 +104,12 @@ public class TourGuideController {
 		return JsonStream.serialize(tourGuideService.getNearByAttractions(visitedLocation, utils.getUser(userName)));
 	}
 
+	/**
+	 * @param userName provide user name of user
+	 * @return return an int value representing a sum of all rewards
+	 * @throws UserNoTFoundException when user do not exist
+	 * @throws RewardException when reward point were not retrieved correctly
+	 */
 	@GetMapping(value = "/getRewards", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getRewards(@RequestParam String userName) throws UserNoTFoundException, RewardException {
 		userName = correctPatern(userName);
@@ -86,12 +117,22 @@ public class TourGuideController {
 		return JsonStream.serialize(tourGuideService.getUserRewards(utils.getUser(userName)));
 	}
 
+	/**
+	 * @return a list of all user and their localization
+	 * @throws LocalisationException when location was not retrieved
+	 */
 	@GetMapping(value = "/getAllCurrentLocations", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getAllCurrentLocations() throws LocalisationException {
 		logger.info("User is using /getAllCurrentLocations");
 		return JsonStream.serialize(tourGuideService.gettAllCurrentLocation());
 	}
 
+	/**
+	 * @param userName provide user name of user
+	 * @return List of trip from supplier and price as JSON
+	 * @throws UserNoTFoundException when user do not exist
+	 * @throws ProviderNoTFoundException providers were not retrieved correctly
+	 */
 	@GetMapping(value = "/getTripDeals", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getTripDeals(@RequestParam String userName) throws UserNoTFoundException, ProviderNoTFoundException {
 		userName = correctPatern(userName);
@@ -104,7 +145,13 @@ public class TourGuideController {
 			return null;
 		}
 	}
-
+	
+	/**
+	 * @param userName provide user name of user
+	 * @return Localization of user as JSON
+	 * @throws UserNoTFoundException when user do not exist
+	 * @throws LocalisationException when location was not retrieved
+	 */
 	@GetMapping(value = "/trackUser", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String trackUser(@RequestParam String userName) throws UserNoTFoundException, LocalisationException {
 		userName = correctPatern(userName);
@@ -118,6 +165,10 @@ public class TourGuideController {
 		}
 	}
 
+	/**
+	 * @param param1 a string provided by user
+	 * @return string without special characters
+	 */
 	private String correctPatern(String param1) {
 		return param1.replaceAll("[\n\r|\t]", "_");
 	}

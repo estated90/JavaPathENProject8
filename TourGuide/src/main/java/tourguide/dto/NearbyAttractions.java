@@ -1,5 +1,10 @@
 package tourguide.dto;
 
+/**
+ * @author Nicolas
+ *<p>DTO to return the nearby attraction from the user</p>
+ *
+ */
 public class NearbyAttractions {
 
 	private String attractionName;

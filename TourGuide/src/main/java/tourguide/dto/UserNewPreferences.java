@@ -5,6 +5,11 @@ import javax.validation.constraints.Min;
 
 import tourguide.validators.FieldMatch;
 
+/**
+ * @author Nicolas
+ *<p>DTO for user to provide the preference information and for them to be verified</p>
+ *
+ */
 @FieldMatch
 public class UserNewPreferences {
 

@@ -1,12 +1,18 @@
 package tourguide.dto;
 
+/**
+ * @author Nicolas
+ *
+ */
 public class Geolocalisation {
 
 	private double longitude;
 	private double latitude;
 	
-	
-	
+	/**
+	 * @param longitude the longitude
+	 * @param latitude the latitude
+	 */
 	public Geolocalisation(double longitude, double latitude) {
 		super();
 		this.longitude = longitude;
@@ -36,7 +42,4 @@ public class Geolocalisation {
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
-	
-	
-	
 }
