@@ -6,8 +6,7 @@
 > Application that is used for user to plan their trip. They can use the services of different suppliers to get some prices. The application will also use their localization to provide the attraction nearby. And finally the application help you get reward point when visiting attraction to have price on future trips.
 
 ## Technical Conception
-
-![Conception technique](D:\Documents\GitHub\JavaPathENProject8\Conception technique.jpg)
+![Technical Conception](https://github.com/estated90/JavaPathENProject8/blob/master/Conception%20technique.jpg)
 
 ## Usage
 
