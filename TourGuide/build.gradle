@@ -57,6 +57,7 @@ dependencies {
 	compile 'org.apache.commons:commons-collections4:4.4'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
 	testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+	// Swagger 2
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
 	
@@ -80,6 +81,7 @@ dependencyManagement {
 
 test {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
 }
 
 jacoco {
@@ -88,15 +90,13 @@ jacoco {
 }
 
 jacocoTestReport {
+    dependsOn test
     reports {
         xml.enabled true
         csv.enabled false
         html.destination file("${buildDir}/jacocoHtml")
     }
 }
-
-test.finalizedBy jacocoTestReport
-check.dependsOn jacocoTestCoverageVerification
 
 jacocoTestCoverageVerification {
   violationRules {

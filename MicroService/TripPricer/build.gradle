@@ -27,6 +27,10 @@ dependencies {
 	
 	compile(name:'sharedObject', ext:'jar')
 	compile(name:'TripPricer', ext:'jar')
+	
+	// Swagger 2
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
 }
 
 test {

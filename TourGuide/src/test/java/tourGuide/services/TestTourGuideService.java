@@ -170,7 +170,7 @@ class TestTourGuideService {
 	void getAllUsersCurrentLocation() throws InterruptedException, ExecutionException, LocalisationException,
 			UserNoTFoundException, RewardException {
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 1; i <= 3; i++) {
 			tourGuideService.trackUserLocation(user);
 			tourGuideService.trackUserLocation(user2);
 		}
