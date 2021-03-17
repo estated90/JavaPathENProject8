@@ -44,6 +44,10 @@ import tourguide.proxies.TripPriceFeign;
 import tourguide.tracker.Tracker;
 import tourguide.utils.Utils;
 
+/**
+ * @author Nico
+ *
+ */
 @Service
 public class TourGuideService {
 	@Autowired
@@ -55,6 +59,9 @@ public class TourGuideService {
 	public final Tracker tracker;
 	boolean testMode = true;
 
+	/**
+	 * @param rewardsService The RewardService
+	 */
 	public TourGuideService(RewardsService rewardsService) {
 		this.rewardsService = rewardsService;
 		if (testMode) {
@@ -67,6 +74,11 @@ public class TourGuideService {
 		addShutDownHook();
 	}
 
+	/**
+	 * @param user The User
+	 * @return The list of user rewards
+	 * @throws RewardException Raise exception if error
+	 */
 	public List<UserReward> getUserRewards(User user) throws RewardException {
 		try {
 			logger.info("Retrieving user with reward for user : {}", user.getUserName());
@@ -76,6 +88,11 @@ public class TourGuideService {
 		}
 	}
 
+	/**
+	 * @param user The User
+	 * @return The visited Location
+	 * @throws LocalisationException Exception if not found
+	 */
 	public VisitedLocation getUserLocation(User user) throws LocalisationException {
 		logger.info("Retrieving user location for user : {}", user.getUserName());
 		try {
@@ -87,6 +104,11 @@ public class TourGuideService {
 		}
 	}
 
+	/**
+	 * @param userName User name of user
+	 * @return The User
+	 * @throws UserNoTFoundException If no user found
+	 */
 	public User getUser(String userName) throws UserNoTFoundException {
 		logger.info("Retrieving user with username : {}", userName);
 		User user = internalUserMap.get(userName);
@@ -100,6 +122,10 @@ public class TourGuideService {
 
 	}
 
+	/**
+	 * @return All users
+	 * @throws UserNoTFoundException If no user found
+	 */
 	public List<User> getAllUsers() throws UserNoTFoundException {
 		logger.info("Retrieving all users");
 		try {
@@ -110,6 +136,10 @@ public class TourGuideService {
 		}
 	}
 
+	/**
+	 * @param user The User
+	 * @throws UserNoTFoundException if user already in DB
+	 */
 	public void addUser(User user) throws UserNoTFoundException {
 		if (!internalUserMap.containsKey(user.getUserName())) {
 			internalUserMap.put(user.getUserName(), user);
@@ -119,35 +149,48 @@ public class TourGuideService {
 		}
 	}
 
+	/**
+	 * @param user The User
+	 * @return The list of providers
+	 * @throws ProviderNoTFoundException Exception if result is null
+	 */
 	public List<Provider> getTripDeals(User user) throws ProviderNoTFoundException {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(UserReward::getRewardPoints).sum();
-		if (tripPricer.getPrice(TRIPPRICERAPIKEY, user.getUserId(),
-				user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
-				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints)!=null) {
+		if (tripPricer.getPrice(TRIPPRICERAPIKEY, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
+				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(),
+				cumulatativeRewardPoints) != null) {
 			List<Provider> providers = tripPricer.getPrice(TRIPPRICERAPIKEY, user.getUserId(),
 					user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
 					user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
-					user.setTripDeals(providers);
-					return providers;
+			user.setTripDeals(providers);
+			return providers;
 		} else {
 			logger.error("No provider have been found for user: {}", user.getUserName());
 			throw new ProviderNoTFoundException("No provider have been found");
 		}
 	}
 
+	/**
+	 * @param user The User
+	 * @return The Visited location
+	 * @throws LocalisationException Exception if result is null
+	 */
 	public VisitedLocation trackUserLocation(User user) throws LocalisationException {
 		logger.info("Tracking location user : {}", user.getUserName());
 		VisitedLocation visitedLocation = gpsUtilFeign.getUserLocation(user.getUserId());
-		if (visitedLocation!=null) {
+		if (visitedLocation != null) {
 			user.addToVisitedLocations(visitedLocation);
 			rewardsService.calculateRewards(user);
 			return visitedLocation;
-		}else {
+		} else {
 			logger.error("No localization have been found for user: {}:", user.getUserName());
 			throw new LocalisationException("No localisation have been found");
 		}
 	}
 
+	/**
+	 * @param users The list of Users
+	 */
 	public void trackAllUserLocation(List<User> users) {
 		int minutesWait = 15;
 		ExecutorService executorService = Executors.newFixedThreadPool(1000);
@@ -169,6 +212,11 @@ public class TourGuideService {
 		logger.info("*************** Tracking users finished ****************");
 	}
 
+	/**
+	 * @param visitedLocation The visited locqtion
+	 * @param user            The User
+	 * @return List of attraction near user
+	 */
 	public List<NearbyAttractions> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<NearbyAttractions> nearbyAttractions = new ArrayList<>();
 		gpsUtilFeign.getAttractions().forEach(attraction -> {
@@ -196,6 +244,11 @@ public class TourGuideService {
 		});
 	}
 
+	/**
+	 * @param user The user
+	 * @param userNewPreferences The DTO user preferences
+	 * @return The User preferences
+	 */
 	public UserPreferences updatePreferences(User user, UserNewPreferences userNewPreferences) {
 		CurrencyUnit currency = Monetary.getCurrency("USD");
 		UserPreferences userPreferences = user.getUserPreferences();
@@ -211,6 +264,10 @@ public class TourGuideService {
 		return user.getUserPreferences();
 	}
 
+	/**
+	 * @return All localization for all users
+	 * @throws LocalisationException Exception if no localization found
+	 */
 	public Map<String, Location> gettAllCurrentLocation() throws LocalisationException {
 		logger.info("Getting all the user localisation in DB");
 		try {
@@ -259,10 +316,8 @@ public class TourGuideService {
 	}
 
 	private void generateUserLocationHistory(User user) {
-		IntStream.range(0, 3).forEach(i -> 
-			user.addToVisitedLocations(new VisitedLocation(user.getUserId(),
-					new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime()))
-		);
+		IntStream.range(0, 3).forEach(i -> user.addToVisitedLocations(new VisitedLocation(user.getUserId(),
+				new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime())));
 	}
 
 	private double generateRandomLongitude() {

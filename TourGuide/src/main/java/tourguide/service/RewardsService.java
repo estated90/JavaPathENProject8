@@ -20,6 +20,13 @@ import tourguide.proxies.GpsUtilFeign;
 import tourguide.proxies.RewardCentralFeign;
 import tourguide.utils.Utils;
 
+/**
+ * @author Nico
+ *         <p>
+ *         The service that manage all rewards related service
+ *         </p>
+ *
+ */
 @Service
 public class RewardsService {
 
@@ -34,7 +41,9 @@ public class RewardsService {
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
 
-
+	/**
+	 * @param proximityBuffer The proximity buffer
+	 */
 	public void setProximityBuffer(int proximityBuffer) {
 		this.proximityBuffer = proximityBuffer;
 	}
@@ -43,6 +52,12 @@ public class RewardsService {
 		proximityBuffer = defaultProximityBuffer;
 	}
 
+	/**
+	 * @param user User UUID
+	 *             <p>
+	 *             Calculate the rewards for one user according to visited location
+	 *             </p>
+	 */
 	public void calculateRewards(User user) {
 		logger.info("Calculating reward for {}", user.getUserName());
 		CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
@@ -54,29 +69,40 @@ public class RewardsService {
 				if (user.getUserRewards().stream()
 						.noneMatch(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
 						&& nearAttraction(visitedLocation, attraction)) {
-					user.addUserReward(
-							new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+					user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
 				}
 			}
 		}
 	}
 
+	/**
+	 * @param user        User UUID
+	 * @param attractions The list of attraction of the providers
+	 *                    <p>
+	 *                    Method used only when calculating all rewards for all
+	 *                    users
+	 *                    </p>
+	 * 
+	 */
 	public void calculateAllRewards(User user, List<Attraction> attractions) {
 		logger.info("Calculating reward for {}", user.getUserName());
-			CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
-			userLocations.addAll(user.getVisitedLocations());
-			userLocations.stream().forEach(visitedLocation -> 
-				attractions.stream().forEach(attraction -> {
-					if (user.getUserRewards().stream()
-							.noneMatch(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
-							&& nearAttraction(visitedLocation, attraction)) {
-						user.addUserReward(
-								new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-					}
-				})
-			);
+		CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>();
+		userLocations.addAll(user.getVisitedLocations());
+		userLocations.stream().forEach(visitedLocation -> attractions.stream().forEach(attraction -> {
+			if (user.getUserRewards().stream()
+					.noneMatch(r -> r.attraction.getAttractionName().equals(attraction.getAttractionName()))
+					&& nearAttraction(visitedLocation, attraction)) {
+				user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+			}
+		}));
 	}
 
+	/**
+	 * @param users List of user to calculate
+	 *              <p>
+	 *              Multiple threads, limited in a time of minutes
+	 *              </p>
+	 */
 	public void calculateAllRewards(List<User> users) {
 		int minutesWait = 20;
 		ExecutorService executorService = Executors.newFixedThreadPool(1000);
@@ -94,18 +120,38 @@ public class RewardsService {
 		logger.info("*************** Reward Calculation finished ****************");
 	}
 
+	/**
+	 * @param attraction The attraction
+	 * @param location The location
+	 * @return Boolean if within range
+	 */
 	public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
 		return getDistance(attraction, location) < attractionProximityRange;
 	}
 
+	/**
+	 * @param visitedLocation the visited location
+	 * @param attraction the attraction
+	 * @return Boolean if within range
+	 */
 	private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
 		return getDistance(attraction, visitedLocation.getLocation()) < proximityBuffer;
 	}
 
+	/**
+	 * @param attraction The attraction
+	 * @param user The user UUID
+	 * @return The points from visiting an attraction
+	 */
 	public int getRewardPoints(Attraction attraction, User user) {
 		return rewardCentralFeign.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
 	}
 
+	/**
+	 * @param attraction The attraction
+	 * @param loc2 The second location
+	 * @return the value of the distance in miles
+	 */
 	public double getDistance(Attraction attraction, Location loc2) {
 		double lat1 = Math.toRadians(attraction.getLatitude());
 		double lon1 = Math.toRadians(attraction.getLongitude());

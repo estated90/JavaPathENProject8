@@ -8,6 +8,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * @author Nico
+ *
+ */
 @SpringBootApplication
 @EnableFeignClients("tourGuide")
 @EnableSwagger2

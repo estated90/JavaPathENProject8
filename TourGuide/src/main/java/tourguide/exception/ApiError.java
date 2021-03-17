@@ -39,7 +39,7 @@ public class ApiError {
     /**
      * @param status HTTP status
      * @param message Message from error
-     * @param errors The error
+     * @param error The error
      */
     public ApiError(final HttpStatus status, final String message, final String error) {
         super();

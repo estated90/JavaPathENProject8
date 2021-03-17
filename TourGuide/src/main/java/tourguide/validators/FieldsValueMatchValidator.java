@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import tourguide.dto.UserNewPreferences;
 
+/**
+ * @author Nico
+ *
+ */
 public class FieldsValueMatchValidator implements ConstraintValidator<FieldMatch, UserNewPreferences> {
 
 	private Logger logger = LoggerFactory.getLogger(FieldsValueMatchValidator.class);

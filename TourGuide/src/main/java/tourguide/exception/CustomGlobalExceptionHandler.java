@@ -23,6 +23,11 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+/**
+ * @author Nico
+ * <p>Exception handler for global API exception</p>
+ *
+ */
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -77,6 +82,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
 	//
 
+	/**
+	 * @param ex Exception raised
+	 * @param request received
+	 * @return A message about how to handle request
+	 */
 	@ExceptionHandler({ MethodArgumentTypeMismatchException.class })
 	public ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex,
 			final WebRequest request) {
@@ -86,6 +96,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 		return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
 
+	/**
+	 * @param ex Exception raised
+	 * @param request received
+	 * @return list of error not respecting constraint of object
+	 */
 	@ExceptionHandler({ ConstraintViolationException.class })
 	public ResponseEntity<Object> handleConstraintViolation(final ConstraintViolationException ex,
 			final WebRequest request) {
@@ -133,6 +148,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
 	// 500
 
+	/**
+	 * @param ex Exception raised
+	 * @param request received
+	 * @return General internal error message
+	 */
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleAll(final Exception ex, final WebRequest request) {
 		logger.info(ex.getClass().getName());
