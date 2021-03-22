@@ -61,7 +61,7 @@ public class Tracker extends Thread {
 				logger.debug("Tracker sleeping");
 				TimeUnit.SECONDS.sleep(trackingPollingInterval);
 			} catch (InterruptedException e) {
-				logger.error("Tracker sleeping failed");
+				logger.error("Tracker sleeping failed", e.getMessage());
 				break;
 			}
 		}

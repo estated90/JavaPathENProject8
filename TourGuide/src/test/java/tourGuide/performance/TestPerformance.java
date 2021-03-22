@@ -39,7 +39,7 @@ class TestPerformance {
 	@BeforeAll
 	public static void setUp() {
 		Locale.setDefault(locale);
-		InternalTestHelper.setInternalUserNumber(100);
+		InternalTestHelper.setInternalUserNumber(100000);
 	}
 
 	// private ExecutorService executorService = Executors.newFixedThreadPool(1000);
