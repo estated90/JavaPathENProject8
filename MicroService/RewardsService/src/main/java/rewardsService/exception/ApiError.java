@@ -1,4 +1,4 @@
-package rewardsService.exception;
+package RewardsService.exception;
 
 import java.util.Arrays;
 import java.util.List;

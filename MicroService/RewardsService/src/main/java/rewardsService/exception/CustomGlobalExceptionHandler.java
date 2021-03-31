@@ -1,4 +1,4 @@
-package rewardsService.exception;
+package RewardsService.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

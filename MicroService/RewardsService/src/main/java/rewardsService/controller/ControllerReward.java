@@ -1,4 +1,4 @@
-package rewardsService.controller;
+package RewardsService.controller;
 
 import java.util.UUID;
 

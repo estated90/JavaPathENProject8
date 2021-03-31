@@ -1,4 +1,4 @@
-package rewardsService;
+package RewardsService;
 
 import java.util.Locale;
 
